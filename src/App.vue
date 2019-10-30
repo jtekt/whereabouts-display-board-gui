@@ -93,6 +93,8 @@ export default {
       company_structure: [],
 
       node_selector_visible: false,
+
+
     }
   },
   sockets: {
@@ -107,6 +109,7 @@ export default {
     },
     unauthorized(data) {
       console.log("unauthorized")
+      alert(data)
     },
     authenticated(data) {
       console.log("authenticated")
@@ -243,6 +246,25 @@ body {
   margin: 5px;
 }
 
+
+.node_selector_wrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.node_selector_wrapper > *{
+  padding: 10px;
+
+}
+
+.node_selector{
+  background-color: #dddddd;
+}
+
+.node_selector_handle_container{
+  background-color: #dddddd;
+
+}
 
 
 
