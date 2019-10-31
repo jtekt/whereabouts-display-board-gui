@@ -1,87 +1,81 @@
 <template>
   <div id="app">
 
-    <div class="header">
+    <!-- header bar -->
+    <TopBar
+      softwareName="行先掲示板 v4.0"
+      v-bind:user="user"
+      v-on:logout="logout()"/>
 
-      <div class="signature">
 
-        <img src="https://cdn.maximemoreillon.com/logo/logo.svg" alt="">
-        <div class="software_info">
-          <div class="">行先掲示板 v2.0</div>
-          <div class="">Maxime MOREILLON</div>
+    <div class="main">
+      <!-- login form -->
+      <!-- SHOULD NOT BE SHOWN IF LOGGING IN -->
+      <LoginForm
+        v-if="!user && !logging_in"
+        v-on:login="login($event)"/>
 
-        </div>
-      </div>
-
+      <!-- visible only if logged in -->
       <div class="" v-if="user">
-        Logged in as {{user.name_kanji}}
-        <button type="button" v-on:click="logout()">Logout</button>
-      </div>
-      <!-- THIS WILL STAY FOREVER IF NOT LOGGED IN -->
-      <div class="" v-else>
-        Not logged in (yet)
-      </div>
 
-    </div>
+        <!-- Node selector -->
+        <div class="node_selector_wrapper">
+          <div class="node_selector" v-if="node_selector_visible">
 
-    <!-- login form -->
-    <form v-if="!user" class="" v-on:submit.prevent="login">
-      <input type="text" ref="email_input" placeholder="e-mail address">
-      <input type="password" ref="password_input" placeholder="password">
-      <input type="submit" value="login">
-    </form>
+            <!-- display the nodes (Recursive) -->
+            <CorporateStructureNode
+              v-on:select_node="select_node($event)"
+              v-for="division in company_structure"
+              v-bind:node_data="division"/>
 
-    <!-- visible only if logged in -->
-    <div class="" v-if="user">
+          </div>
 
-      <!-- Node selector -->
-      <div class="node_selector_wrapper">
-        <div class="node_selector" v-if="node_selector_visible">
+          <!-- open or close group selector -->
+          <div class="node_selector_handle_container">
+            Group selection
+            <button type="button" v-on:click="toggle_node_selector()">{{node_selector_button_text}}</button>
+          </div>
+        </div>
 
-          <!-- display the nodes (Recursive) -->
-          <CorporateStructureNode
-            v-on:select_node="select_node($event)"
-            v-for="division in company_structure"
-            v-bind:node_data="division"/>
+
+        <!-- the whereabouts themselves -->
+        <div class="" v-if="employees.length > 0">
+
+          <!-- Name of the node -->
+          <div class="node_name" v-if="node">{{node.properties.name}}</div>
+
+          <div class="employees_table">
+            <Employee
+              v-for="employee in employees"
+              v-bind:employee="employee"/>
+          </div>
 
         </div>
 
-        <!-- open or close group selector -->
-        <div class="node_selector_handle_container">
-          Group selection <button type="button" v-on:click="node_selector_visible = !node_selector_visible">{{node_selector_button_text}}</button>
-        </div>
+        <!-- status messages -->
+        <div class="" v-else-if="loading_employees">Loading...</div>
+        <div class="" v-else-if="!node">No group selected</div>
+        <div class="" v-else>No result</div>
+
+
       </div>
-
-
-      <!-- the whereabouts themselves -->
-      <div class="" v-if="employees.length > 0">
-
-        <!-- Name of the node -->
-        <div class="node_name" v-if="node">{{node.properties.name}}</div>
-
-        <Employee
-          v-for="employee in employees"
-          v-bind:employee="employee"/>
-      </div>
-      <div class="" v-else>
-        No employees
-      </div>
-
-
     </div>
-
-
 
   </div>
 </template>
 
 <script>
+import LoginForm from '@/components/login_form/LoginForm.vue'
+import TopBar from '@/components/top_bar/TopBar.vue'
+
 import Employee from '@/components/Employee.vue'
 import CorporateStructureNode from '@/components/CorporateStructureNode.vue'
 
 export default {
   name: 'app',
   components: {
+    TopBar,
+    LoginForm,
     Employee,
     CorporateStructureNode,
   },
@@ -94,7 +88,9 @@ export default {
 
       node_selector_visible: false,
 
-
+      // SUBOPTIMAL
+      logging_in: false, // Not used anymore
+      loading_employees: false,
     }
   },
   sockets: {
@@ -102,6 +98,7 @@ export default {
       console.log('socket connected to external server')
       if(this.$cookies.get('jwt')){
         console.log("JWT is present in cookies")
+        this.logging_in = true;
         this.$socket.client.emit('token_authentication', {
           jwt: this.$cookies.get('jwt')
         })
@@ -109,10 +106,16 @@ export default {
     },
     unauthorized(data) {
       console.log("unauthorized")
+      this.logging_in = false;
       alert(data)
+
+      this.$cookies.remove('jwt')
+      this.user = null;
+
     },
     authenticated(data) {
       console.log("authenticated")
+      this.logging_in = false;
 
       // Get user info
       if('user' in data){
@@ -126,16 +129,10 @@ export default {
         this.$cookies.set('jwt', data.jwt)
       }
 
-      // Get company structure
-      // MOVE THIS TO WHEN SELECTOR IS ACCESSED!
-      this.$socket.client.emit('get_company_structure', {})
-
       // Get employees if node_id provided
-      const params = new URLSearchParams(location.search)
-      if(params.get('node_id')){
-        console.log("node_id present in query parameters, requesting employees")
-        this.$socket.client.emit('get_employees_belonging_to_node', params.get('node_id'))
-      }
+
+
+      this.get_employees_from_node()
 
     },
     internal_server_connected(data){
@@ -145,30 +142,65 @@ export default {
       console.log("internal_server_disconnected")
     },
     company_structure(data){
+      console.log("Got company structure")
       this.company_structure = data;
     },
     delete_and_create_all(data) {
-      console.log(data)
+      console.log("delete_and_create_all")
+      // remove loader
+      this.loading_employees = false;
+
+      // Save the node info to display the node as title
       this.node = data.node;
+
+      // add employees
       this.delete_all();
       this.add_or_update_some(data.employees);
     },
     add_or_update_some(data) {
       this.add_or_update_some(data);
     },
+
   },
   methods: {
-    login(){
+    login(credentials){
+      console.log("logging in")
+      console.log(credentials)
       this.$socket.client.emit('credentials_authentication', {
         credentials: {
-          email: this.$refs.email_input.value,
-          password: this.$refs.password_input.value,
+          email: credentials.email,
+          password: credentials.password,
         }
       } )
     },
     logout(){
-      this.$cookies.remove('jwt')
-      this.user = null;
+      this.$socket.client.emit('logout', {})
+    },
+    get_employees_from_node(node_id){
+
+      // DIRTY
+      const params = new URLSearchParams(location.search)
+      if(params.get('node_id')){
+        console.log("node_id present in query parameters, requesting employees")
+        this.$socket.client.emit('get_employees_belonging_to_node',params.get('node_id'))
+        this.loading_employees = true;
+      }
+      else {
+        console.log("could not find node_id in query, opening group selector")
+        this.open_node_selector()
+      }
+    },
+    open_node_selector(){
+      // Get company structure
+      this.$socket.client.emit('get_company_structure', {})
+      this.node_selector_visible = true;
+    },
+    close_node_selector(){
+      this.node_selector_visible = false;
+    },
+    toggle_node_selector(){
+      if(this.node_selector_visible) this.close_node_selector();
+      else this.open_node_selector();
     },
     delete_all: function(){
       this.employees.splice(0,this.employees.length);
@@ -189,10 +221,13 @@ export default {
     },
     select_node(node_id){
 
+      // update query
       window.history.pushState("", "", "/?node_id="+node_id);
-      const params = new URLSearchParams(location.search)
-      this.$socket.client.emit('get_employees_belonging_to_node', params.get('node_id'))
 
+      // get employees corresponding to query
+      this.get_employees_from_node()
+
+      // close node selector
       this.node_selector_visible = false;
     },
   },
@@ -211,41 +246,19 @@ export default {
 }
 body {
   margin: 0;
+  min-height: 100vh;
 }
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
 }
 
-.header{
-  background-color: #444444;
-  color: white;
-  padding: 10px;
-
-  display: flex;
-  justify-content: space-between;
-}
-
-.signature{
-  display: flex;
-}
-.signature img {
-  height: 40px;
-
-}
-
-.software_info {
-  margin-left: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
 .node_name {
-  font-size: 5vmin;
+  /* AKA group name */
+  font-size: 6vmin;
   text-align: center;
-  margin: 5px;
+  margin: 15px;
 }
-
 
 .node_selector_wrapper{
   display: flex;
@@ -263,7 +276,22 @@ body {
 
 .node_selector_handle_container{
   background-color: #dddddd;
+}
 
+.employees_table {
+
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-bottom: 25px;
+
+  /* IE fallback behavior */
+  display: flex;
+  flex-wrap: wrap;
+
+  /* Normal behavior */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70vmin,1fr));
+  grid-column-gap: 20px;
 }
 
 

@@ -30,12 +30,7 @@
           v-on:select_node="$emit('select_node',$event)"
           v-bind:node_data="child"/>
       </div>
-
-
     </div>
-
-
-
 
    </div>
 </template>
