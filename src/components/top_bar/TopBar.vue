@@ -11,9 +11,13 @@
 
     </div>
 
-    <div class="" v-if="user">
-      Logged in as {{user.name_kanji}}
-      <button type="button" v-on:click="$emit('logout')">Logout</button>
+    <div class="login_info" v-if="user">
+      <div class="">
+        Logged in as {{user.name_kanji}}
+      </div>
+      <div class="">
+        <button type="button" v-on:click="$emit('logout')">Logout</button>
+      </div>
     </div>
 
     <!-- status messages -->
@@ -64,6 +68,10 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.login_info{
+  text-align: center;
 }
 
 @keyframes logo_rotation {

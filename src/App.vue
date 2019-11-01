@@ -19,31 +19,22 @@
       <!-- visible only if logged in -->
       <div class="" v-if="user">
 
-        <!-- Node selector -->
-        <div class="node_selector_wrapper">
-          <div class="node_selector" v-if="node_selector_visible">
-
-            <!-- display the nodes (Recursive) -->
-            <CorporateStructureNode
-              v-on:select_node="select_node($event)"
-              v-for="division in company_structure"
-              v-bind:node_data="division"/>
-
-          </div>
-
-          <!-- open or close group selector -->
-          <div class="node_selector_handle_container">
-            Group selection
-            <button type="button" v-on:click="toggle_node_selector()">{{node_selector_button_text}}</button>
-          </div>
-        </div>
-
-
         <!-- the whereabouts themselves -->
-        <div class="" v-if="employees.length > 0">
+        <div class="" v-if="node && employees.length > 0">
 
           <!-- Name of the node -->
-          <div class="node_name" v-if="node">{{node.properties.name}}</div>
+          <div
+            class="group_name_container"
+            v-if="node"
+            v-on:click="open_node_selector()">
+            <div class="group_name" >
+              {{node.properties.name}}
+            </div>
+            <div class="">
+              (Click to change)
+            </div>
+          </div>
+
 
           <div class="employees_table">
             <Employee
@@ -54,13 +45,36 @@
         </div>
 
         <!-- status messages -->
-        <div class="" v-else-if="loading_employees">Loading...</div>
-        <div class="" v-else-if="!node">No group selected</div>
-        <div class="" v-else>No result</div>
+        <div class="status_message" v-if="node && employees.length === 0">No result</div>
+        <div class="status_message" v-else-if="loading_employees">Loading...</div>
+
 
 
       </div>
     </div>
+
+
+
+    <Modal
+      v-on:close="close_node_selector()"
+      v-bind:open="node_selector_visible"
+      v-bind:close_button="node">
+
+      <div class="modal_title">
+        Group selection
+      </div>
+
+      <div class="corporate_structure_container">
+
+        <CorporateStructureNode
+        v-on:select_node="select_node($event)"
+        v-for="division in company_structure"
+        v-bind:node_data="division"/>
+
+      </div>
+
+    </Modal>
+
 
   </div>
 </template>
@@ -68,6 +82,8 @@
 <script>
 import LoginForm from '@/components/login_form/LoginForm.vue'
 import TopBar from '@/components/top_bar/TopBar.vue'
+
+import Modal from '@/components/vue_modal/Modal.vue'
 
 import Employee from '@/components/Employee.vue'
 import CorporateStructureNode from '@/components/CorporateStructureNode.vue'
@@ -77,6 +93,7 @@ export default {
   components: {
     TopBar,
     LoginForm,
+    Modal,
     Employee,
     CorporateStructureNode,
   },
@@ -189,11 +206,16 @@ export default {
     },
     open_node_selector(){
       // Get company structure
+      this.company_structure = [] // Emptying current company structure to get new one
       this.$socket.client.emit('get_company_structure', {})
       this.node_selector_visible = true;
     },
     close_node_selector(){
-      this.node_selector_visible = false;
+      // Only allow to close if node selected
+      if(this.node){
+        this.node_selector_visible = false;
+      }
+
     },
     toggle_node_selector(){
       if(this.node_selector_visible) this.close_node_selector();
@@ -256,11 +278,15 @@ body {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
 }
 
-.node_name {
+.group_name_container {
+  text-align: center;
+  cursor: pointer;
+  margin: 20px;
+
+}
+.group_name {
   /* AKA group name */
   font-size: 6vmin;
-  text-align: center;
-  margin: 15px;
 }
 
 .node_selector_wrapper{
@@ -297,7 +323,26 @@ body {
   grid-column-gap: 20px;
 }
 
+.status_message {
+  text-align: center;
+  margin: 25px;
+  font-size: 120%;
+}
 
+.corporate_structure_container{
+  height: 80vh;
+  overflow-y: auto;
+}
 
+.modal_window_outer{
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.modal_title {
+  padding: 10px;
+  font-size: 5vmin;
+  text-align: center;
+}
 
 </style>

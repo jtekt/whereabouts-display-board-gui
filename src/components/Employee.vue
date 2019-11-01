@@ -158,6 +158,14 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  /*
+  display: flex;
+  align-items: center;
+  */
+
+  
+
 }
 
 .name_cell:not(.present){
