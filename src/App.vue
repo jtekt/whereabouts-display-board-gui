@@ -8,6 +8,7 @@
       v-on:logout="logout()"/>
 
 
+
     <div class="main">
       <!-- login form -->
       <!-- SHOULD NOT BE SHOWN IF LOGGING IN -->
@@ -118,25 +119,20 @@ export default {
       this.logging_in = false;
 
       // Get user info
-      if('user' in data){
-        console.log('Received user info')
-        this.user = data.user;
-      }
+      if('user' in data) this.user = data.user;
 
       // Save the JWT
-      if('jwt' in data){
-        console.log("Received a JWT, storing in cookies")
-        this.$cookies.set('jwt', data.jwt)
-      }
+      if('jwt' in data) this.$cookies.set('jwt', data.jwt)
 
       // Get employees if node_id provided
-
-
       this.get_employees_from_node()
 
     },
     internal_server_connected(data){
       console.log("internal_server_connected")
+
+      // Get employees if node_id provided
+      this.get_employees_from_node()
     },
     internal_server_disconnected(data){
       console.log("internal_server_disconnected")
@@ -154,18 +150,18 @@ export default {
       this.node = data.node;
 
       // add employees
-      this.delete_all();
-      this.add_or_update_some(data.employees);
+      this.delete_and_create_all(data.employees);
     },
-    add_or_update_some(data) {
-      this.add_or_update_some(data);
+    update_some(data) {
+      console.log('update_some')
+      console.log(data)
+      this.update_some(data.employees);
     },
 
   },
   methods: {
     login(credentials){
       console.log("logging in")
-      console.log(credentials)
       this.$socket.client.emit('credentials_authentication', {
         credentials: {
           email: credentials.email,
@@ -178,7 +174,7 @@ export default {
     },
     get_employees_from_node(node_id){
 
-      // DIRTY
+      // A BIT DIRTY
       const params = new URLSearchParams(location.search)
       if(params.get('node_id')){
         console.log("node_id present in query parameters, requesting employees")
@@ -189,6 +185,7 @@ export default {
         console.log("could not find node_id in query, opening group selector")
         this.open_node_selector()
       }
+
     },
     open_node_selector(){
       // Get company structure
@@ -202,22 +199,28 @@ export default {
       if(this.node_selector_visible) this.close_node_selector();
       else this.open_node_selector();
     },
-    delete_all: function(){
+    delete_and_create_all(incoming_employees){
       this.employees.splice(0,this.employees.length);
+      incoming_employees.forEach(incoming_employee => {
+        this.employees.push(incoming_employee)
+      })
     },
-    add_or_update_some: function(incoming_member_array){
-      for(var i=0; i<incoming_member_array.length; i++){
-        var member_exists = false;
-        for(var j=0; j<this.employees.length; j++){
-          if(incoming_member_array[i].employee_number === this.employees[j].employee_number){
-            member_exists = true;
-            this.$set(this.employees,j,incoming_member_array[i])
-            break;
-          }
+    update_some(incoming_employees){
+
+
+      // ONLY DEALS WITH LOCATION AND PRESENCE!
+      incoming_employees.forEach(incoming_employee => {
+
+        var match = this.employees.find(employee => {
+          return employee.employee_number === incoming_employee.employee_number;
+        })
+
+        if(match) {
+          // usin set for reactivity
+          this.$set(match, 'current_location', incoming_employee.current_location)
+          this.$set(match, 'presence', incoming_employee.presence)
         }
-        // If the member does not exist, create it
-        if(!member_exists) this.employees.push(incoming_member_array[i])
-      }
+      })
     },
     select_node(node_id){
 

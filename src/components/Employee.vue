@@ -1,15 +1,19 @@
 <template>
   <div class="employee">
+
     <!-- name cell -->
-    <div class="name_cell" v-on:click="toggle_presence" v-bind:class="{present:presence}" >
+    <div
+      class="name_cell"
+      v-on:click="toggle_presence"
+      v-bind:class="{present: presence, loading: employee.presence === 'loading'}">
       {{employee.name_kanji}}
     </div>
-    <!-- End of name cell -->
+
     <!-- location cell -->
     <div
       class="location_cell"
       v-if="!location_edit_mode"
-      v-on:click="location_editable()"
+      v-on:click="enable_location_edition()"
       v-html="employee.current_location">
     </div>
 
@@ -17,23 +21,24 @@
       v-else
       class="location_cell location_edit_form"
       v-on:submit.prevent="update_location()">
+
       <input
         ref="location_input"
         type="search"
         v-model="employee_copy.current_location"
         placeholder="行先"
         list="location_input_candidates">
+
       <!-- A few premade options -->
       <datalist style="display:none;" id="location_input_candidates">
         <option v-for="option in premade_options" v-bind:value="option"/>
       </datalist>
-      <input type="submit" value="Update">
-      <button type="button" v-on:click="location_edit_mode = false">Cancel</button>
+
+      <!-- controls -->
+      <span class="mdi mdi-check icon_button" v-on:click="update_location()"></span>
+      <span class="mdi mdi-close icon_button" v-on:click="location_edit_mode = false"></span>
+
     </form>
-
-
-
-    <!-- TOD: IMPLEMENT MODAL -->
 
    </div>
 </template>
@@ -47,7 +52,11 @@ export default {
   data(){
     return{
       location_edit_mode: false,
-      employee_copy: undefined,
+
+      // needs to be in data because v-model to input
+      employee_copy: null,
+
+      // premade location options
       premade_options: [
         "居室",
         "帰宅",
@@ -56,10 +65,14 @@ export default {
       ]
     }
   },
+  mounted(){
+    this.employee_copy = JSON.parse(JSON.stringify(this.employee))
+  },
   methods: {
 
-    location_editable(){
-      this.employee_copy = JSON.parse(JSON.stringify(this.employee))
+    enable_location_edition(){
+
+      this.employee_copy.curren_location = this.employee.curren_location
       this.location_edit_mode = true;
 
       // Let the element actuall appear befoe trying to focus
@@ -71,17 +84,22 @@ export default {
       this.$socket.client.emit('update_back_end', this.employee_copy)
 
       // Loader
-      // TODO: make a better loading loader
       this.employee.current_location = "updating..."
+
 
     },
     toggle_presence(){
-      this.employee_copy = JSON.parse(JSON.stringify(this.employee))
+
+      // just copy results in problems when toggling presence while editing location
+      this.employee_copy.presence = this.employee.presence
+
       // Toggle state
       if(this.employee_copy.presence === "present") this.employee_copy.presence = "absent";
       else this.employee_copy.presence = "present"
 
       this.$socket.client.emit('update_back_end', this.employee_copy)
+
+      this.employee.presence = "loading"
     },
   },
   computed: {
@@ -113,17 +131,17 @@ export default {
   margin: 5px;
 
   font-size: 3.5vmin;
+
 }
 
-.name_cell, .location_cell  {
-
+.name_cell, .location_cell, .location_edit_form  {
   margin: 5px;
   padding: 5px;
+}
 
-
+.name_cell, .location_cell{
   text-align: center;
   cursor: pointer;
-
 }
 
 .name_cell {
@@ -147,22 +165,48 @@ export default {
   color: white;
 }
 
+.name_cell.loading{
+  background: rgb(255,255,255);
+  background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 25%, rgba(192,0,0,1) 50%, rgba(255,255,255,1) 75%, rgba(255,255,255,1) 100%);
+  background-size: 400% 400%;
 
+
+  animation-name: movingGradient;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  color: black;
+
+}
+
+.location_cell, .location_edit_form{
+  width: 65%;
+  border-left: 1px solid #aaaaaa;
+}
 
 .location_cell {
-  width: 65%;
-
-  border-left: 1px solid #aaaaaa;
-
-
   overflow: hidden;
   text-overflow: ellipsis; /* NOT WORKING */
 }
 
-
 .location_edit_form {
   display: flex;
   align-items: stretch;
+}
+
+.location_edit_form .icon_button{
+  border-radius: 5px;
+  border: 1px solid #444444;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+
+  transition: background-color 0.1s;
+}
+
+.location_edit_form .icon_button:hover{
+  background-color: #dddddd;
 }
 
 .location_edit_form > *{
@@ -170,9 +214,22 @@ export default {
 }
 
 .location_edit_form input[type="search"]{
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid #444444;
+  text-align: center;
   flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+  min-width: 0;
 }
 
+
+
+@keyframes movingGradient {
+  0%{background-position:100% 0%}
+  100%{background-position:0% 0%}
+}
 
 
 

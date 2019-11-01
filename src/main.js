@@ -1,4 +1,5 @@
 import 'url-search-params-polyfill';
+import '@mdi/font/css/materialdesignicons.css';
 import Vue from 'vue'
 import App from './App.vue'
 import VueCookies from 'vue-cookies'

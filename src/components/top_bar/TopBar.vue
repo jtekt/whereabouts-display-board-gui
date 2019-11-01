@@ -3,7 +3,7 @@
 
     <div class="signature">
 
-      <img src="https://cdn.maximemoreillon.com/logo/logo.svg" alt="">
+      <img src="@/assets/logo/thick/logo.svg" alt="">
       <div class="software_info">
         <div class="">{{softwareName}}</div>
         <div class="">Maxime MOREILLON</div>
@@ -52,6 +52,11 @@ export default {
 }
 .signature img {
   height: 40px;
+
+  animation-name: logo_rotation;
+  animation-duration: 60s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
 }
 
 .software_info {
@@ -59,5 +64,10 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+@keyframes logo_rotation {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
 }
 </style>

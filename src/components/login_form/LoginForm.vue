@@ -4,7 +4,8 @@
     <input type="password" v-model="credentials.password" placeholder="password">
     <input type="submit" value="login">
     <div class="info">
-        デフォルトのパスワード：社員番号<br>（最初の００あってもなくても）
+        デフォルトのパスワード：社員番号<br>
+        （最初の００あってもなくても）
       </div>
   </form>
 </template>
