@@ -75,6 +75,8 @@
 
     </Modal>
 
+    <DisconnectionWarning v-bind:connectionStatus="connection_status"/>
+
 
   </div>
 </template>
@@ -84,6 +86,9 @@ import LoginForm from '@/components/login_form/LoginForm.vue'
 import TopBar from '@/components/top_bar/TopBar.vue'
 
 import Modal from '@/components/vue_modal/Modal.vue'
+
+import DisconnectionWarning from '@/components/DisconnectionWarning.vue'
+
 
 import Employee from '@/components/Employee.vue'
 import CorporateStructureNode from '@/components/CorporateStructureNode.vue'
@@ -96,6 +101,7 @@ export default {
     Modal,
     Employee,
     CorporateStructureNode,
+    DisconnectionWarning
   },
   data: function(){
     return {
@@ -106,6 +112,11 @@ export default {
 
       node_selector_visible: false,
 
+      connection_status: {
+        internal_connected: true,
+        external_connected: false,
+      },
+
       // SUBOPTIMAL
       logging_in: false, // Not used anymore
       loading_employees: false,
@@ -114,6 +125,8 @@ export default {
   sockets: {
     connect() {
       console.log('socket connected to external server')
+      this.connection_status.external_connected = true;
+
       if(this.$cookies.get('jwt')){
         console.log("JWT is present in cookies")
         this.logging_in = true;
@@ -121,6 +134,10 @@ export default {
           jwt: this.$cookies.get('jwt')
         })
       }
+    },
+    disconnect(){
+      console.log('socket disconnected from external server')
+      this.connection_status.external_connected = false;
     },
     unauthorized(data) {
       console.log("unauthorized")
@@ -147,12 +164,14 @@ export default {
     },
     internal_server_connected(data){
       console.log("internal_server_connected")
+      this.connection_status.internal_connected = true;
 
       // Get employees if node_id provided
       this.get_employees_from_node()
     },
     internal_server_disconnected(data){
       console.log("internal_server_disconnected")
+      this.connection_status.internal_connected = false;
     },
     company_structure(data){
       console.log("Got company structure")
@@ -330,7 +349,7 @@ body {
 }
 
 .corporate_structure_container{
-  height: 80vh;
+  height: 75vh;
   overflow-y: auto;
 }
 
