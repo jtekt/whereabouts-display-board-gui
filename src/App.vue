@@ -27,7 +27,7 @@
             class="group_name_container"
             v-if="node"
             v-on:click="open_node_selector()">
-            <div class="group_name" >
+            <div class="group_name">
               {{node.properties.name}}
             </div>
             <div class="">
