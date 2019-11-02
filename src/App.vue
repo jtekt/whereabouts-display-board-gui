@@ -2,10 +2,16 @@
   <div id="app">
 
     <!-- header bar -->
+    <!--
     <TopBar
       softwareName="行先掲示板 v4.0"
       v-bind:user="user"
       v-on:logout="logout()"/>
+    -->
+    <Header
+    softwareName="行先掲示板"
+    v-bind:user="user"
+    v-on:logout="logout()"/>
 
 
 
@@ -84,6 +90,7 @@
 <script>
 import LoginForm from '@/components/login_form/LoginForm.vue'
 import TopBar from '@/components/top_bar/TopBar.vue'
+import Header from '@/components/header/Header.vue'
 
 import Modal from '@/components/vue_modal/Modal.vue'
 
@@ -97,6 +104,7 @@ export default {
   name: 'app',
   components: {
     TopBar,
+    Header,
     LoginForm,
     Modal,
     Employee,
