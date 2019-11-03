@@ -2,12 +2,6 @@
   <div id="app">
 
     <!-- header bar -->
-    <!--
-    <TopBar
-      softwareName="行先掲示板 v4.0"
-      v-bind:user="user"
-      v-on:logout="logout()"/>
-    -->
     <Header
     softwareName="行先掲示板"
     v-bind:user="user"
@@ -15,7 +9,7 @@
 
 
 
-    <div class="main">
+    <main>
       <!-- login form -->
       <!-- SHOULD NOT BE SHOWN IF LOGGING IN -->
       <LoginForm
@@ -57,11 +51,12 @@
 
 
       </div>
-    </div>
+    </main>
 
-
+    <Footer softwareName="行先掲示板"/>
 
     <Modal
+      class="corporate_structure_modal"
       v-on:close="close_node_selector()"
       v-bind:open="node_selector_visible"
       v-bind:close_button="node">
@@ -70,13 +65,17 @@
         Group selection
       </div>
 
-      <div class="corporate_structure_container">
+      <div class="corporate_structure_container" v-if="company_structure.length > 0">
 
         <CorporateStructureNode
         v-on:select_node="select_node($event)"
         v-for="division in company_structure"
         v-bind:node_data="division"/>
 
+      </div>
+
+      <div v-else class="corporate_structure_loader">
+        Loading...
       </div>
 
     </Modal>
@@ -89,8 +88,8 @@
 
 <script>
 import LoginForm from '@/components/login_form/LoginForm.vue'
-import TopBar from '@/components/top_bar/TopBar.vue'
 import Header from '@/components/header/Header.vue'
+import Footer from '@/components/footer/Footer.vue'
 
 import Modal from '@/components/vue_modal/Modal.vue'
 
@@ -103,8 +102,8 @@ import CorporateStructureNode from '@/components/CorporateStructureNode.vue'
 export default {
   name: 'app',
   components: {
-    TopBar,
     Header,
+    Footer,
     LoginForm,
     Modal,
     Employee,
@@ -303,6 +302,16 @@ body {
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  height: 100vh;
+}
+
+main {
+  display: block; /* IE */
+  flex-grow: 1;
 }
 
 .group_name_container {
@@ -357,8 +366,16 @@ body {
 }
 
 .corporate_structure_container{
+  margin-top: 10px;
   height: 75vh;
   overflow-y: auto;
+}
+
+
+.corporate_structure_loader {
+  text-align: center;
+  margin-top: 10px;
+  height: 75vh;
 }
 
 .modal_window_outer{
@@ -367,8 +384,7 @@ body {
 }
 
 .modal_title {
-  padding: 10px;
-  font-size: 5vmin;
+  font-size: 4vmin;
   text-align: center;
 }
 
