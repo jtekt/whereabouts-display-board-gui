@@ -127,6 +127,10 @@ export default {
       console.log('socket connected to external server')
       this.connection_status.external_connected = true;
 
+      // Check if JWT present in query
+      const params = new URLSearchParams(location.search)
+      if(params.get('jwt')) this.$cookies.set('jwt', params.get('jwt'))
+
       // Check if possible to authentify using a JWT
       if(this.$cookies.get('jwt')){
         console.log("JWT is present in cookies")

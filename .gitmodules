@@ -1,9 +1,6 @@
 [submodule "src/components/vue_modal"]
 	path = src/components/vue_modal
 	url = https://github.com/maximemoreillon/vue_modal.git
-[submodule "src/components/header"]
-	path = src/components/header
-	url = https://github.com/maximemoreillon/vue_header.git
 [submodule "src\\components\\footer"]
 	path = src\\components\\footer
 	url = https://github.com/maximemoreillon/vue_footer.git
