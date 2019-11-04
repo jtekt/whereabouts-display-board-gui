@@ -65,14 +65,12 @@ export default {
       ]
     }
   },
-  mounted(){
-    this.employee_copy = JSON.parse(JSON.stringify(this.employee))
-  },
   methods: {
 
     enable_location_edition(){
+      // Changing presence while editing location will override the location
+      this.employee_copy = JSON.parse(JSON.stringify(this.employee))
 
-      this.employee_copy.curren_location = this.employee.curren_location
       this.location_edit_mode = true;
 
       // Let the element actuall appear befoe trying to focus
@@ -90,8 +88,7 @@ export default {
     },
     toggle_presence(){
 
-      // just copy results in problems when toggling presence while editing location
-      this.employee_copy.presence = this.employee.presence
+      this.employee_copy = JSON.parse(JSON.stringify(this.employee))
 
       // Toggle state
       if(this.employee_copy.presence === "present") this.employee_copy.presence = "absent";
@@ -164,12 +161,12 @@ export default {
   align-items: center;
   */
 
-  
+
 
 }
 
 .name_cell:not(.present){
-  background-color: #ce0000;
+  background-color: #c00000;
   color: white;
 }
 

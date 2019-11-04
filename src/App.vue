@@ -41,7 +41,9 @@
 
         <!-- status messages -->
         <div class="status_message" v-if="loading_employees">Loading...</div>
-        <div class="status_message" v-else-if="employees.length === 0">No result</div>
+        <div class="status_message" v-else-if="employees.length === 0">
+          No result, click <span class="mdi mdi-account-group button_icon"/> to change group
+        </div>
 
       </div>
     </main>
@@ -255,14 +257,15 @@ export default {
       else this.open_node_selector();
     },
     delete_and_create_all(incoming_employees){
+      // Delete all
       this.employees.splice(0,this.employees.length);
+      
+      // Create all
       incoming_employees.forEach(incoming_employee => {
         this.employees.push(incoming_employee)
       })
     },
     update_some(incoming_employees){
-
-
       // ONLY DEALS WITH LOCATION AND PRESENCE!
       incoming_employees.forEach(incoming_employee => {
 
@@ -304,7 +307,9 @@ export default {
 }
 body {
   margin: 0;
-  min-height: 100vh;
+  background-color: #dddddd;
+  padding: 25px; /* as opposed to margin of child so as to use dheight 100% */
+  height: 100vh;
 }
 
 #app {
@@ -313,7 +318,11 @@ body {
   flex-direction: column;
   align-items: stretch;
 
-  height: 100vh;
+  min-height: 100%;
+
+
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
 }
 
 main {
@@ -393,6 +402,12 @@ main {
 .modal_title {
   font-size: 4vmin;
   text-align: center;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 0;
+  }
 }
 
 </style>
