@@ -5,7 +5,8 @@
     <Header
     softwareName="行先掲示板"
     v-bind:user="user"
-    v-on:logout="logout()"/>
+    v-on:logout="logout()"
+    v-on:open_node_selector="open_node_selector()"/>
 
 
 
@@ -22,19 +23,13 @@
         <!-- the whereabouts themselves -->
         <div class="" v-if="node && employees.length > 0">
 
-          <!-- Name of the node -->
+          <!-- Name of the node/group/unit -->
           <div
             class="group_name_container"
             v-if="node"
             v-on:click="open_node_selector()">
-            <div class="group_name">
-              {{node.properties.name}}
-            </div>
-            <div class="">
-              (Click to change)
-            </div>
+            <div class="group_name">{{node.properties.name}}</div>
           </div>
-
 
           <div class="employees_table">
             <Employee
@@ -45,10 +40,8 @@
         </div>
 
         <!-- status messages -->
-        <div class="status_message" v-if="node && employees.length === 0">No result</div>
-        <div class="status_message" v-else-if="loading_employees">Loading...</div>
-
-
+        <div class="status_message" v-if="loading_employees">Loading...</div>
+        <div class="status_message" v-else-if="employees.length === 0">No result</div>
 
       </div>
     </main>
@@ -59,7 +52,7 @@
       class="corporate_structure_modal"
       v-on:close="close_node_selector()"
       v-bind:open="node_selector_visible"
-      v-bind:close_button="node">
+      close_button>
 
       <div class="modal_title">
         Group selection
@@ -88,7 +81,7 @@
 
 <script>
 import LoginForm from '@/components/login_form/LoginForm.vue'
-import Header from '@/components/header/Header.vue'
+import Header from '@/components/header_whereabouts/Header.vue'
 import Footer from '@/components/footer/Footer.vue'
 
 import Modal from '@/components/vue_modal/Modal.vue'
@@ -125,8 +118,8 @@ export default {
       },
 
       // SUBOPTIMAL
-      logging_in: false, // Not used anymore
-      loading_employees: false,
+      logging_in: false, // Used to show or not show the login form
+      loading_employees: false, // used to distinguish between having no result or still loading
     }
   },
   sockets: {
@@ -134,6 +127,7 @@ export default {
       console.log('socket connected to external server')
       this.connection_status.external_connected = true;
 
+      // Check if possible to authentify using a JWT
       if(this.$cookies.get('jwt')){
         console.log("JWT is present in cookies")
         this.logging_in = true;
@@ -153,7 +147,6 @@ export default {
 
       this.$cookies.remove('jwt')
       this.user = null;
-
     },
     authenticated(data) {
       console.log("authenticated")
@@ -215,15 +208,29 @@ export default {
     logout(){
       this.$socket.client.emit('logout', {})
     },
-    get_employees_from_node(node_id){
+    get_employees_from_node(){
 
-      // A BIT DIRTY
+      // Retrieve ID of node to get from query
       const params = new URLSearchParams(location.search)
       if(params.get('node_id')){
         console.log("node_id present in query parameters, requesting employees")
         this.$socket.client.emit('get_employees_belonging_to_node',params.get('node_id'))
         this.loading_employees = true;
+
+        // save the group in cookies
+        this.$cookies.set('node_id', params.get('node_id'))
       }
+
+      else if(this.$cookies.get('node_id')){
+        console.log("node_id present in cookies, requesting employees")
+        // Maybe node id can be obtained from cookies
+        this.$socket.client.emit('get_employees_belonging_to_node',this.$cookies.get('node_id'))
+        this.loading_employees = true;
+
+        // update query
+        window.history.pushState("", "", "/?node_id="+this.$cookies.get('node_id'));
+      }
+
       else {
         console.log("could not find node_id in query, opening group selector")
         this.open_node_selector()
@@ -237,11 +244,7 @@ export default {
       this.node_selector_visible = true;
     },
     close_node_selector(){
-      // Only allow to close if node selected
-      if(this.node){
-        this.node_selector_visible = false;
-      }
-
+      this.node_selector_visible = false;
     },
     toggle_node_selector(){
       if(this.node_selector_visible) this.close_node_selector();
