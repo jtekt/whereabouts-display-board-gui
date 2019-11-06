@@ -14,9 +14,6 @@
     </div>
 
 
-
-
-
   </header>
 </template>
 
@@ -32,13 +29,8 @@ export default {
     },
   },
   data(){
-    return {
-      user_info_visible: false,
-    }
+    return {}
   },
-  methods: {
-
-  }
 
 }
 </script>
@@ -53,18 +45,23 @@ header{
 
 
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
 
-  border-bottom: 2px solid #c00000;
+  border-bottom: 0.5vmin solid #c00000;
 
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
 
-  padding: 10px;
+
 }
 
 header > * {
   display: flex;
   align-items: center;
+  //padding: 10px;
+}
+
+header > * > *{
+  margin: 1.2vmin;
 }
 
 
@@ -73,11 +70,12 @@ header > * {
 }
 
 .signature > * {
-  margin-right: 5px;
+
 }
 
 .logo {
-  height: 25px;
+  width: 5vmin;
+  height: 5vmin;
 
   animation-name: logo_rotation;
   animation-duration: 60s;
@@ -87,22 +85,23 @@ header > * {
 
 
 .software_name{
-  font-size: 22px;
+  font-size: 4.5vmin;
 }
 
 .login_info{
   text-align: center;
 }
 
-.buttons_wrapper {
 
+.buttons_wrapper{
+  margin-left: auto;
 }
 
 .button_icon{
-  margin-left: 15px;
+
   color: white;
   cursor: pointer;
-  font-size: 25px;
+  font-size: 4.5vmin;
 }
 
 .button_icon:hover{

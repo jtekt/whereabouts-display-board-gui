@@ -164,16 +164,16 @@ export default {
       // Save the JWT
       if('jwt' in data) this.$cookies.set('jwt', data.jwt)
 
-      // Get employees if node_id provided
-      this.get_employees_from_node()
+      // Get employees
+      this.get_employees()
 
     },
     internal_server_connected(data){
       console.log("internal_server_connected")
       this.connection_status.internal_connected = true;
 
-      // Get employees if node_id provided
-      this.get_employees_from_node()
+      // Get employees
+      this.get_employees()
     },
     internal_server_disconnected(data){
       console.log("internal_server_disconnected")
@@ -196,7 +196,6 @@ export default {
     },
     update_some(data) {
       console.log('update_some')
-      console.log(data)
       this.update_some(data.employees);
     },
 
@@ -214,31 +213,34 @@ export default {
     logout(){
       this.$socket.client.emit('logout', {})
     },
-    get_employees_from_node(){
+    get_employees_from_node(node_id){
+      this.$socket.client.emit('get_employees_belonging_to_node',node_id);
+      this.employees.splice(0,this.employees.length);
+      this.loading_employees = true;
+    },
+    get_employees(){
 
       // Retrieve ID of node to get from query
       const params = new URLSearchParams(location.search)
       if(params.get('node_id')){
         console.log("node_id present in query parameters, requesting employees")
-        this.$socket.client.emit('get_employees_belonging_to_node',params.get('node_id'))
-        this.loading_employees = true;
+        this.get_employees_from_node(params.get('node_id'))
 
         // save the group in cookies
         this.$cookies.set('node_id', params.get('node_id'))
       }
 
+      // If node ID cannot be obtained from query, try to get it from cookies
       else if(this.$cookies.get('node_id')){
         console.log("node_id present in cookies, requesting employees")
-        // Maybe node id can be obtained from cookies
-        this.$socket.client.emit('get_employees_belonging_to_node',this.$cookies.get('node_id'))
-        this.loading_employees = true;
+        this.get_employees_from_node(this.$cookies.get('node_id'))
 
         // update query
         window.history.pushState("", "", "/?node_id="+this.$cookies.get('node_id'));
       }
 
       else {
-        console.log("could not find node_id in query, opening group selector")
+        console.log("could not find node_id, opening group selector")
         this.open_node_selector()
       }
 
@@ -257,9 +259,9 @@ export default {
       else this.open_node_selector();
     },
     delete_and_create_all(incoming_employees){
-      // Delete all
+      // Delete all (probably deleted already but just to be sure)
       this.employees.splice(0,this.employees.length);
-      
+
       // Create all
       incoming_employees.forEach(incoming_employee => {
         this.employees.push(incoming_employee)
@@ -283,21 +285,17 @@ export default {
     select_node(node_id){
 
       // update query
+      // TODO: BETTER BEHAVIOR ON BACK BUTTON
       window.history.pushState("", "", "/?node_id="+node_id);
 
       // get employees corresponding to query
-      this.get_employees_from_node()
+      this.get_employees()
 
       // close node selector
       this.node_selector_visible = false;
     },
   },
-  computed: {
-    node_selector_button_text(){
-      if(!this.node_selector_visible) return "⮟"
-      else return "⮝"
-    },
-  }
+
 }
 </script>
 
@@ -309,7 +307,7 @@ body {
   margin: 0;
   background-color: #dddddd;
   padding: 25px; /* as opposed to margin of child so as to use dheight 100% */
-  height: 100vh;
+  min-height: 100vh;
 }
 
 #app {

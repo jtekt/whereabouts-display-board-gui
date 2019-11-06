@@ -12,7 +12,7 @@ Vue.use(VueSocketIOExt, socket);
 
 Vue.use(VueCookies)
 
-VueCookies.config('7d')
+VueCookies.config('100d')
 
 
 Vue.config.productionTip = false

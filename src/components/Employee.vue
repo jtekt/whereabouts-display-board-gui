@@ -57,12 +57,7 @@ export default {
       employee_copy: null,
 
       // premade location options
-      premade_options: [
-        "居室",
-        "帰宅",
-        "年休",
-        "出張",
-      ]
+      premade_options: ["居室","帰宅","年休","出張"]
     }
   },
   methods: {
