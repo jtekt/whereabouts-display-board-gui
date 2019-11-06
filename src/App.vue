@@ -48,7 +48,7 @@
       </div>
     </main>
 
-    <Footer softwareName="行先掲示板"/>
+    <Footer softwareName="行先掲示板 v4.0.2"/>
 
     <Modal
       class="corporate_structure_modal"
