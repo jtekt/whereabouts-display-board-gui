@@ -311,7 +311,8 @@ body {
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Meiryo, Arial, sans-serif;
+
   display: flex;
   flex-direction: column;
   align-items: stretch;
