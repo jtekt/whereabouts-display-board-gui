@@ -33,7 +33,7 @@
 
           <div class="employees_table">
             <Employee
-              v-for="employee in employees"
+              v-for="employee in ordered_employees"
               v-bind:employee="employee"/>
           </div>
 
@@ -295,6 +295,11 @@ export default {
       this.node_selector_visible = false;
     },
   },
+  computed: {
+    ordered_employees: function () {
+      return this.employees.sort((a, b) => { return a.employee_number - b.employee_number;});
+    }
+  }
 
 }
 </script>
@@ -306,8 +311,10 @@ export default {
 body {
   margin: 0;
   background-color: #dddddd;
-  padding: 25px; /* as opposed to margin of child so as to use dheight 100% */
-  min-height: 100vh;
+  padding: 25px; /* as opposed to margin of child so as to use height 100% */
+
+  height: 100vh;
+
 }
 
 #app {
@@ -317,16 +324,12 @@ body {
   flex-direction: column;
   align-items: stretch;
 
-  min-height: 100%;
-
-
   background-color: white;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
 }
 
 main {
   display: block; /* IE */
-  flex-grow: 1;
 }
 
 .group_name_container {
@@ -406,6 +409,9 @@ main {
 @media only screen and (max-width: 600px) {
   body {
     padding: 0;
+  }
+  #app {
+    min-height: 100vh;
   }
 }
 
