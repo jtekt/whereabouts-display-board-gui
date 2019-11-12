@@ -3,10 +3,10 @@
 
     <!-- header bar -->
     <Header
-    softwareName="行先掲示板"
-    v-bind:user="user"
-    v-on:logout="logout()"
-    v-on:open_node_selector="open_node_selector()"/>
+      applicationName="行先掲示板"
+      v-bind:user="user"
+      v-on:logout="logout()"
+      v-on:open_node_selector="open_node_selector()"/>
 
 
 
@@ -48,7 +48,7 @@
       </div>
     </main>
 
-    <Footer softwareName="行先掲示板 v4.0.2"/>
+    <Footer applicationName="行先掲示板 v4.0.2"/>
 
     <Modal
       class="corporate_structure_modal"
@@ -84,7 +84,7 @@
 <script>
 import LoginForm from '@/components/login_form/LoginForm.vue'
 import Header from '@/components/header_whereabouts/Header.vue'
-import Footer from '@/components/footer/Footer.vue'
+import Footer from '@/components/jtekt_vue_layouting_components/Footer.vue'
 
 import Modal from '@/components/vue_modal/Modal.vue'
 
@@ -305,32 +305,9 @@ export default {
 </script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-body {
-  margin: 0;
-  background-color: #dddddd;
-  padding: 25px; /* as opposed to margin of child so as to use height 100% */
 
-  height: 100vh;
+@import './components/jtekt_vue_layouting_components/master.css';
 
-}
-
-#app {
-  font-family: 'Avenir', Helvetica, Meiryo, Arial, sans-serif;
-
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-}
-
-main {
-  display: block; /* IE */
-}
 
 .group_name_container {
   text-align: center;

@@ -2,16 +2,12 @@
   <header>
 
     <!-- stuff on the right side -->
-    <div class="signature">
-      <img class="logo" src="@/assets/logo/thick/logo.svg" alt="">
-      <div class="software_name">{{softwareName}}</div>
-    </div>
+    <img class="rotating_logo" src="@/assets/logo/thick/logo.svg" alt="">
+    <div class="application_name">{{applicationName}}</div>
 
     <!-- stuff on the left side -->
-    <div class="buttons_wrapper">
-      <span v-if="user" class="mdi mdi-account-group button_icon" v-on:click="$emit('open_node_selector')"></span>
-      <span v-if="user" class="mdi mdi-logout button_icon" v-on:click="$emit('logout')"></span>
-    </div>
+    <span v-if="user" class="mdi mdi-account-group button aligned-right" v-on:click="$emit('open_node_selector')"></span>
+    <span v-if="user" class="mdi mdi-logout button" v-on:click="$emit('logout')"></span>
 
 
   </header>
@@ -21,7 +17,7 @@
 export default {
   name: 'Header',
   props: {
-    softwareName: {
+    applicationName: {
       type: String,
     },
     user: {
@@ -37,74 +33,52 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-header{
-  position: relative;
+#app header {
+  grid-area: header;
 
-  background-color: #333333;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+
+  background-color: #444444;
   color: white;
 
 
   display: flex;
-  justify-content: flex-start;
+  align-items: stretch;
+}
 
-  border-bottom: 0.5vmin solid #c00000;
-
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-
-
+.application_name{
+  font-size: 120%;
 }
 
 header > * {
   display: flex;
   align-items: center;
-  //padding: 10px;
+
+  margin: 10px;
+  /* keep only one margin width between elements */
+  margin-right: 0px;
 }
 
-header > * > *{
-  margin: 1.2vmin;
+header > *:last-child {
+  margin-right: 10px;
 }
 
-
-.signature {
-
+.rotating_logo {
+  width: 35px;
+  height: 35px;
 }
 
-.signature > * {
-
+.aligned-right{
+  margin-left: auto
 }
 
-.logo {
-  width: 5vmin;
-  height: 5vmin;
-
-  animation-name: logo_rotation;
-  animation-duration: 60s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-}
-
-
-.software_name{
-  font-size: 4.5vmin;
-}
-
-.login_info{
-  text-align: center;
-}
-
-
-.buttons_wrapper{
-  margin-left: auto;
-}
-
-.button_icon{
-
-  color: white;
+.button {
+  font-size: 180%;
   cursor: pointer;
-  font-size: 4.5vmin;
 }
 
-.button_icon:hover{
+
+.button:hover{
   color: #bbbbbb;
 }
 
