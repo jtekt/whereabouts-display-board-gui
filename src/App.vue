@@ -1,138 +1,43 @@
 <template>
+  <!-- everything needs to be inside app to the reactive -->
   <div id="app">
 
-    <!-- header bar -->
-    <Header
+    <AppTemplate
       applicationName="行先掲示板"
-      v-bind:user="user"
-      v-on:logout="logout()"
-      v-on:open_node_selector="open_node_selector()"/>
-
-
-
-    <main>
-      <!-- login form -->
-      <!-- SHOULD NOT BE SHOWN IF LOGGING IN -->
-      <LoginForm
-        v-if="!user && !logging_in"
-        v-on:login="login($event)"/>
-
-      <!-- visible only if logged in -->
-      <div class="" v-if="user">
-
-        <!-- the whereabouts themselves -->
-        <div class="" v-if="node && employees.length > 0">
-
-          <!-- Name of the node/group/unit -->
-          <div
-            class="group_name_container"
-            v-if="node"
-            v-on:click="open_node_selector()">
-            <div class="group_name">{{node.properties.name}}</div>
-          </div>
-
-          <div class="employees_table">
-            <Employee
-              v-for="employee in ordered_employees"
-              v-bind:employee="employee"/>
-          </div>
-
-        </div>
-
-        <!-- status messages -->
-        <div class="status_message" v-if="loading_employees">Loading...</div>
-        <div class="status_message" v-else-if="employees.length === 0">
-          No result, click <span class="mdi mdi-account-group button_icon"/> to change group
-        </div>
-
-      </div>
-    </main>
-
-    <Footer applicationName="行先掲示板 v4.0.2"/>
-
-    <Modal
-      class="corporate_structure_modal"
-      v-on:close="close_node_selector()"
-      v-bind:open="node_selector_visible"
-      close_button>
-
-      <div class="modal_title">
-        Group selection
-      </div>
-
-      <div class="corporate_structure_container" v-if="company_structure.length > 0">
-
-        <CorporateStructureNode
-        v-on:select_node="select_node($event)"
-        v-for="division in company_structure"
-        v-bind:node_data="division"/>
-
-      </div>
-
-      <div v-else class="corporate_structure_loader">
-        Loading...
-      </div>
-
-    </Modal>
-
-    <DisconnectionWarning v-bind:connectionStatus="connection_status"/>
-
+      v-bind:navigation="navigation"/>
 
   </div>
 </template>
 
 <script>
-import LoginForm from '@/components/login_form/LoginForm.vue'
-import Header from '@/components/header_whereabouts/Header.vue'
-import Footer from '@/components/jtekt_vue_layouting_components/Footer.vue'
-
-import Modal from '@/components/vue_modal/Modal.vue'
-
-import DisconnectionWarning from '@/components/DisconnectionWarning.vue'
-
-
-import Employee from '@/components/Employee.vue'
-import CorporateStructureNode from '@/components/CorporateStructureNode.vue'
+import AppTemplate from '@/components/jtekt_vue_template/AppTemplate.vue'
 
 export default {
   name: 'app',
   components: {
-    Header,
-    Footer,
-    LoginForm,
-    Modal,
-    Employee,
-    CorporateStructureNode,
-    DisconnectionWarning
+    AppTemplate
   },
-  data: function(){
-    return {
-      user: null,
-      node: null,
-      employees: [],
-      company_structure: [],
-
-      node_selector_visible: false,
-
+  data(){
+    return{
+      navigation : [
+        /*
+        {route: '/', label: 'List', icon: 'format-list-bulleted'},
+        {route: '/inbox', label: 'Inbox', icon: 'inbox-arrow-down'},
+        */
+      ],
       connection_status: {
         internal_connected: true,
         external_connected: false,
       },
-
-      // SUBOPTIMAL
-      logging_in: false, // Used to show or not show the login form
-      loading_employees: false, // used to distinguish between having no result or still loading
     }
   },
   sockets: {
     connect() {
       console.log('socket connected to external server')
       this.connection_status.external_connected = true;
-
       // Check if JWT present in query
       const params = new URLSearchParams(location.search)
       if(params.get('jwt')) this.$cookies.set('jwt', params.get('jwt'))
-
       // Check if possible to authentify using a JWT
       if(this.$cookies.get('jwt')){
         console.log("JWT is present in cookies")
@@ -150,28 +55,22 @@ export default {
       console.log("unauthorized")
       this.logging_in = false;
       alert(data)
-
       this.$cookies.remove('jwt')
       this.user = null;
     },
     authenticated(data) {
       console.log("authenticated")
       this.logging_in = false;
-
       // Get user info
       if('user' in data) this.user = data.user;
-
       // Save the JWT
       if('jwt' in data) this.$cookies.set('jwt', data.jwt)
-
       // Get employees
       this.get_employees()
-
     },
     internal_server_connected(data){
       console.log("internal_server_connected")
       this.connection_status.internal_connected = true;
-
       // Get employees
       this.get_employees()
     },
@@ -179,6 +78,7 @@ export default {
       console.log("internal_server_disconnected")
       this.connection_status.internal_connected = false;
     },
+    /*
     company_structure(data){
       console.log("Got company structure")
       this.company_structure = data;
@@ -187,10 +87,8 @@ export default {
       console.log("delete_and_create_all")
       // remove loader
       this.loading_employees = false;
-
       // Save the node info to display the node as title
       this.node = data.node;
-
       // add employees
       this.delete_and_create_all(data.employees);
     },
@@ -198,198 +96,17 @@ export default {
       console.log('update_some')
       this.update_some(data.employees);
     },
-
+    */
   },
-  methods: {
-    login(credentials){
-      console.log("logging in")
-      this.$socket.client.emit('credentials_authentication', {
-        credentials: {
-          email: credentials.email,
-          password: credentials.password,
-        }
-      } )
-    },
-    logout(){
-      this.$socket.client.emit('logout', {})
-    },
-    get_employees_from_node(node_id){
-      this.$socket.client.emit('get_employees_belonging_to_node',node_id);
-      this.employees.splice(0,this.employees.length);
-      this.loading_employees = true;
-    },
-    get_employees(){
-
-      // Retrieve ID of node to get from query
-      const params = new URLSearchParams(location.search)
-      if(params.get('node_id')){
-        console.log("node_id present in query parameters, requesting employees")
-        this.get_employees_from_node(params.get('node_id'))
-
-        // save the group in cookies
-        this.$cookies.set('node_id', params.get('node_id'))
-      }
-
-      // If node ID cannot be obtained from query, try to get it from cookies
-      else if(this.$cookies.get('node_id')){
-        console.log("node_id present in cookies, requesting employees")
-        this.get_employees_from_node(this.$cookies.get('node_id'))
-
-        // update query
-        window.history.pushState("", "", "/?node_id="+this.$cookies.get('node_id'));
-      }
-
-      else {
-        console.log("could not find node_id, opening group selector")
-        this.open_node_selector()
-      }
-
-    },
-    open_node_selector(){
-      // Get company structure
-      this.company_structure = [] // Emptying current company structure to get new one
-      this.$socket.client.emit('get_company_structure', {})
-      this.node_selector_visible = true;
-    },
-    close_node_selector(){
-      this.node_selector_visible = false;
-    },
-    toggle_node_selector(){
-      if(this.node_selector_visible) this.close_node_selector();
-      else this.open_node_selector();
-    },
-    delete_and_create_all(incoming_employees){
-      // Delete all (probably deleted already but just to be sure)
-      this.employees.splice(0,this.employees.length);
-
-      // Create all
-      incoming_employees.forEach(incoming_employee => {
-        this.employees.push(incoming_employee)
-      })
-    },
-    update_some(incoming_employees){
-      // ONLY DEALS WITH LOCATION AND PRESENCE!
-      incoming_employees.forEach(incoming_employee => {
-
-        var match = this.employees.find(employee => {
-          return employee.employee_number === incoming_employee.employee_number;
-        })
-
-        if(match) {
-          // usin set for reactivity
-          this.$set(match, 'current_location', incoming_employee.current_location)
-          this.$set(match, 'presence', incoming_employee.presence)
-        }
-      })
-    },
-    select_node(node_id){
-
-      // update query
-      // TODO: BETTER BEHAVIOR ON BACK BUTTON
-      window.history.pushState("", "", "/?node_id="+node_id);
-
-      // get employees corresponding to query
-      this.get_employees()
-
-      // close node selector
-      this.node_selector_visible = false;
-    },
-  },
-  computed: {
-    ordered_employees: function () {
-      return this.employees.sort((a, b) => { return a.employee_number - b.employee_number;});
-    }
-  }
-
 }
 </script>
 
 <style>
 
-@import './components/jtekt_vue_layouting_components/master.css';
 
 
-.group_name_container {
-  text-align: center;
-  cursor: pointer;
-  margin: 20px;
-
-}
-.group_name {
-  /* AKA group name */
-  font-size: 6vmin;
-}
-
-.node_selector_wrapper{
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-.node_selector_wrapper > *{
-  padding: 10px;
-
-}
-
-.node_selector{
-  background-color: #dddddd;
-}
-
-.node_selector_handle_container{
-  background-color: #dddddd;
-}
-
-.employees_table {
-
-  margin-left: 25px;
-  margin-right: 25px;
-  margin-bottom: 25px;
-
-  /* IE fallback behavior */
-  display: flex;
-  flex-wrap: wrap;
-
-  /* Normal behavior */
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70vmin,1fr));
-  grid-column-gap: 20px;
-}
-
-.status_message {
-  text-align: center;
-  margin: 25px;
-  font-size: 120%;
-}
-
-.corporate_structure_container{
-  margin-top: 10px;
-  height: 75vh;
-  overflow-y: auto;
-}
 
 
-.corporate_structure_loader {
-  text-align: center;
-  margin-top: 10px;
-  height: 75vh;
-}
 
-.modal_window_outer{
-  border-radius: 5px;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-}
-
-.modal_title {
-  font-size: 4vmin;
-  text-align: center;
-}
-
-@media only screen and (max-width: 600px) {
-  body {
-    padding: 0;
-  }
-  #app {
-    min-height: 100vh;
-  }
-}
 
 </style>
