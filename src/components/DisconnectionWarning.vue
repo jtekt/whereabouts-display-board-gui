@@ -8,9 +8,11 @@
       <div class="device_label">Client</div>
     </div>
 
+    <!-- Connection between client and AWS -->
     <div class="connection">
       <hr>
-      <span class="mdi mdi-close" v-bind:class="{visible: !this.connectionStatus.external_connected}"></span>
+      <span class="mdi mdi-loading" v-if="!connectionStatus.external_connected"></span>
+      <hr>
     </div>
 
 
@@ -21,12 +23,13 @@
 
     <div class="connection">
       <hr>
-      <span class="mdi mdi-close" v-bind:class="{visible: !this.connectionStatus.internal_connected}"></span>
+      <span class="mdi mdi-close" v-if="!connectionStatus.internal_connected"></span>
+      <hr>
     </div>
 
     <div class="device_container">
       <span class="mdi mdi-server"></span>
-      <div class="device_label">Mike</div>
+      <div class="device_label">JTEKT</div>
     </div>
 
 
@@ -75,7 +78,7 @@ export default {
   align-items: center;
 
   background-color: #444444; /* fallback for ie */
-  background-color: #444444aa;
+  background-color: #444444cc;
 
   /* values which change when opening the modal */
   /* here are the defaults */
@@ -114,12 +117,12 @@ export default {
 
 .device_container > span {
   font-size: 15vmin;
-  margin: 5vmin;
+  margin: 2vmin;
 
 }
 
 .connection {
-  width: 10vw;
+  width: 20vmin;
   position: relative;
   display: flex;
   justify-content: center;
@@ -130,23 +133,50 @@ export default {
   border: 0.5vmin solid white;
   width: 100%;
   margin: 0;
-
-
 }
 
 .connection span {
-  position: absolute;
-  color: #c00000;
+  margin: 10px;
   font-size: 10vmin;
+  width: 7vmin;
+  height: 7vmin;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.connection span:not(.visible){
-  visibility: hidden;
+.mdi-close {
+  color: #c00000;
+  animation-name: blinking;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
+.mdi-loading {
+  color: transparent;
 
+  border-radius: 100%;
 
+  border: 0.5vmin solid white;
+  border-color: white transparent white transparent;
 
+  animation-name: loader_rotation;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes loader_rotation {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
+}
+
+@keyframes blinking {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
 
 
 

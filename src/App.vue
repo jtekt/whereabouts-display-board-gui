@@ -13,6 +13,7 @@
     <main>
       <!-- login form -->
       <!-- SHOULD NOT BE SHOWN IF LOGGING IN -->
+
       <LoginForm
         v-if="!user && !logging_in"
         v-on:login="login($event)"/>
@@ -69,12 +70,11 @@
 
       </div>
 
-      <div v-else class="corporate_structure_loader">
-        Loading...
-      </div>
+      <div v-else class="corporate_structure_loader">Loading...</div>
 
     </Modal>
 
+    <!-- overlay to show connection problems -->
     <DisconnectionWarning v-bind:connectionStatus="connection_status"/>
 
 
@@ -173,7 +173,7 @@ export default {
       this.connection_status.internal_connected = true;
 
       // Get employees
-      this.get_employees()
+      this.get_employees();
     },
     internal_server_disconnected(data){
       console.log("internal_server_disconnected")
@@ -258,9 +258,12 @@ export default {
       if(this.node_selector_visible) this.close_node_selector();
       else this.open_node_selector();
     },
+    delete_all(){
+      this.employees.splice(0,this.employees.length);
+    },
     delete_and_create_all(incoming_employees){
       // Delete all (probably deleted already but just to be sure)
-      this.employees.splice(0,this.employees.length);
+      this.delete_all();
 
       // Create all
       incoming_employees.forEach(incoming_employee => {
