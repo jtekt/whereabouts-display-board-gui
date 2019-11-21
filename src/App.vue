@@ -22,12 +22,12 @@
       <div class="" v-if="user">
 
         <!-- the whereabouts themselves -->
-        <div class="" v-if="node && employees.length > 0">
+        <div class="" v-if="node && employees.length > 0 && !loading_employees">
 
           <!-- Name of the node/group/unit -->
           <div
-            class="group_name_container"
             v-if="node"
+            class="group_name_container"
             v-on:click="open_node_selector()">
             <div class="group_name">{{node.properties.name}}</div>
           </div>
@@ -41,12 +41,16 @@
         </div>
 
         <!-- status messages -->
-        <div class="status_message" v-if="loading_employees">Loading...</div>
+        <div class="status_message" v-if="loading_employees">
+          <div class="loader"/>
+        </div>
+
         <div class="status_message" v-else-if="employees.length === 0">
           No result, click <span class="mdi mdi-account-group button_icon"/> to change group
         </div>
 
       </div>
+
     </main>
 
     <Footer applicationName="行先掲示板 v4.0.2"/>
@@ -57,20 +61,21 @@
       v-bind:open="node_selector_visible"
       close_button>
 
-      <div class="modal_title">
-        Group selection
-      </div>
+      <div class="modal_title">Group selection</div>
 
       <div class="corporate_structure_container" v-if="company_structure.length > 0">
 
         <CorporateStructureNode
-        v-on:select_node="select_node($event)"
-        v-for="division in company_structure"
-        v-bind:node_data="division"/>
+          v-on:select_node="select_node($event)"
+          v-for="division in company_structure"
+          v-bind:node_data="division"/>
 
       </div>
 
-      <div v-else class="corporate_structure_loader">Loading...</div>
+      <!-- Loading corporate structure -->
+      <div v-else class="corporate_structure_loader">
+        <div class="loader"/>
+      </div>
 
     </Modal>
 
@@ -319,7 +324,6 @@ export default {
 
 }
 .group_name {
-  /* AKA group name */
   font-size: 6vmin;
 }
 
@@ -330,7 +334,6 @@ export default {
 }
 .node_selector_wrapper > *{
   padding: 10px;
-
 }
 
 .node_selector{
@@ -358,6 +361,8 @@ export default {
 }
 
 .status_message {
+  display: flex;
+  justify-content: center;
   text-align: center;
   margin: 25px;
   font-size: 120%;
@@ -365,7 +370,7 @@ export default {
 
 .corporate_structure_container{
   margin-top: 10px;
-  height: 75vh;
+  max-height: 75vh;
   overflow-y: auto;
 }
 
@@ -373,7 +378,6 @@ export default {
 .corporate_structure_loader {
   text-align: center;
   margin-top: 10px;
-  height: 75vh;
 }
 
 .modal_window_outer{
@@ -386,13 +390,24 @@ export default {
   text-align: center;
 }
 
-@media only screen and (max-width: 600px) {
-  body {
-    padding: 0;
-  }
-  #app {
-    min-height: 100vh;
-  }
+
+.loader {
+  margin: 25px;
+  width: 20vmin;
+  height: 20vmin;
+  border-radius: 100%;
+
+  border: 0.5vmin solid white;
+  border-color: #444444 transparent #444444 transparent;
+  animation-name: loader_rotation;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+
+}
+@keyframes loader_rotation {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
 }
 
 </style>
