@@ -11,7 +11,7 @@
     <!-- Connection between client and AWS -->
     <div class="connection">
       <hr>
-      <span class="mdi mdi-loading" v-if="!connectionStatus.external_connected"></span>
+      <span class="mdi mdi-loading" v-if="!$store.state.connection_status.external_connected"></span>
       <hr>
     </div>
 
@@ -23,7 +23,7 @@
 
     <div class="connection">
       <hr>
-      <span class="mdi mdi-close" v-if="!connectionStatus.internal_connected"></span>
+      <span class="mdi mdi-close" v-if="!$store.state.connection_status.internal_connected"></span>
       <hr>
     </div>
 
@@ -40,9 +40,7 @@
 <script>
 export default {
   name: 'DisconnectionWarning',
-  props: {
-    connectionStatus: Object
-  },
+
   data(){
     return {
       enabled: false,
@@ -55,7 +53,7 @@ export default {
 
   computed: {
     warning_visible(){
-      return this.enabled && (!this.connectionStatus.external_connected || !this.connectionStatus.internal_connected)
+      return this.enabled && (!this.$store.state.connection_status.external_connected || !this.$store.state.connection_status.internal_connected)
     }
   }
 }
