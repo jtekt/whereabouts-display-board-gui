@@ -61,6 +61,8 @@ export default {
     const params = new URLSearchParams(location.search)
     if(params.get('node_id')) this.$store.commit("set_node_id", params.get('node_id'))
 
+    if(!this.$store.state.user) this.$router.push('/login');
+
     // get employees
     // MIGHT NOT BE CONNECTED YET!!
     //this.$socket.client.emit('get_employees_belonging_to_node',this.$store.state.node_id);

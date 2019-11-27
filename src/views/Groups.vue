@@ -38,8 +38,8 @@ export default {
     }
   },
   mounted(){
-    console.log("Groups view mounted")
-    this.$socket.client.emit('get_company_structure', {})
+    if(!this.$store.state.user) this.$router.push('/login')
+    else this.$socket.client.emit('get_company_structure', {})
   },
   methods: {
     select_node(node_id){

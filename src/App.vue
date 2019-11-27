@@ -70,6 +70,7 @@ export default {
       this.$cookies.remove('jwt');
       this.$store.commit('update_user_info', null);
     },
+    // This might need to be put in the Login view
     authenticated(data) {
       console.log("authenticated")
 
@@ -81,6 +82,9 @@ export default {
 
       // Get employees
       this.$socket.client.emit('get_employees_belonging_to_node',this.$store.state.node_id);
+
+      // DIRTY
+      if(this.$route !== '/') this.$router.push('/')
 
     },
     internal_server_connected(data){
