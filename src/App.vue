@@ -33,7 +33,7 @@ export default {
   },
   sockets: {
     connect() {
-      console.log('socket connected to external server')
+      console.log('[WS] socket connected to external server')
       this.$store.commit('external_connection_status', true)
 
       // Authentication using JWT after connection if possible
@@ -51,48 +51,68 @@ export default {
           jwt: this.$cookies.get('jwt')
         })
 
+        this.$store.commit('set_authenticating', true);
+
+
+
         // Does not need to go to the login screen
       }
       else {
         // if no JWT exists, then the client must authenticate using credentials
         // NOT REALLY CLEAN
-        this.$router.push('/login')
+        if(this.$route.path !== '/login') this.$router.push('/login')
       }
       // WILL NOT TRY TO GET EMPLOYEES HERE
     },
     disconnect(){
-      console.log('socket disconnected from external server')
+      console.log('[WS] socket disconnected from external server')
       this.$store.commit('external_connection_status', false)
     },
     unauthorized(data) {
       console.log("unauthorized")
 
+      // Delete JWT
       this.$cookies.remove('jwt');
+
+      // Delete local user info
       this.$store.commit('update_user_info', null);
+
+      this.$store.commit('set_authenticating', false);
+
+      // NOT REALLY CLEAN
+      if(this.$route.path !== '/login') this.$router.push('/login')
     },
     // This might need to be put in the Login view
     authenticated(data) {
       console.log("authenticated")
 
-      // Get user info
+      // Save user info in store (i.e. mark as logged in)
       if('user' in data) this.$store.commit('update_user_info', data.user);
 
-      // Save the JWT
+      // Save the JWT in cookies
       if('jwt' in data) this.$cookies.set('jwt', data.jwt)
+
+      // mark as no longer trying to authenticate
+      this.$store.commit('set_authenticating', false);
 
       // Get employees
       this.$socket.client.emit('get_employees_belonging_to_node',this.$store.state.node_id);
+      this.$store.commit('set_employees_loading', true);
 
       // DIRTY
-      if(this.$route !== '/') this.$router.push('/')
+      // Also: deal with node id as query parameter
+      if(this.$route.path !== '/') this.$router.push({path: '/', query: { node_id: this.$store.state.node_id } })
 
     },
+
+    // internal server connection management
     internal_server_connected(data){
       console.log("internal_server_connected")
       this.$store.commit('internal_connection_status', true);
 
       // Get employees
       this.$socket.client.emit('get_employees_belonging_to_node',this.$store.state.node_id);
+      this.$store.commit('set_employees_loading', true);
     },
     internal_server_disconnected(data){
       console.log("internal_server_disconnected")
@@ -109,6 +129,9 @@ export default {
 
       // Save the node info to display the node as title
       this.$store.commit('update_node_info', data.node);
+
+      // Mark as not loading anymore
+      this.$store.commit('set_employees_loading', false);
 
     },
     update_some(data) {

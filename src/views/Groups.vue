@@ -47,8 +47,12 @@ export default {
       // Save the node id in the store
       this.$store.commit("set_node_id", node_id);
 
+      // Get the employees of the node
+      this.$socket.client.emit('get_employees_belonging_to_node',this.$store.state.node_id);
+      this.$store.commit('set_employees_loading', true);
+
       // Go back to main view
-      this.$router.push("/");
+      if(this.$route.path !== '/') this.$router.push({path: '/', query: { node_id: this.$store.state.node_id } })
 
     },
   },

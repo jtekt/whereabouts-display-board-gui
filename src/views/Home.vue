@@ -1,8 +1,14 @@
 <template>
-  <div class="" >
+  <div class="home_view">
+
+    <!-- status messages -->
+    <div class="status_message" v-if="$store.state.employees_loading">
+      <div class="loader"/>
+    </div>
+
 
     <!-- the whereabouts themselves -->
-    <div class="" v-if="$store.state.employees.length > 0">
+    <div class="" v-else-if="$store.state.employees.length > 0">
 
       <!-- Name of the node/group/unit -->
       <div
@@ -20,10 +26,11 @@
 
     </div>
 
-    <!-- status messages -->
     <div class="status_message" v-else>
-      <div class="loader"/>
+      No member
     </div>
+
+
 
     <!-- overlay to show connection problems -->
     <DisconnectionWarning/>
@@ -45,7 +52,6 @@ export default {
   data(){
     return {
       // Employees could actually be managed here
-
       loading_employees: false, // used to distinguish between having no result or still loading
     }
   },

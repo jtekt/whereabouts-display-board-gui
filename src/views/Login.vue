@@ -1,9 +1,13 @@
 <template>
   <div class="login_view">
 
+    <div class="status_message" v-if="$store.state.authenticating">
+      <div class="loader"/>
+    </div>
+
     <form
       class="login_form"
-      v-if="!$store.state.user"
+      v-else-if="!$store.state.user"
       v-on:submit.prevent="login()">
       <input type="text" v-model="credentials.email" placeholder="e-mail address">
       <input type="password" v-model="credentials.password" placeholder="password">
@@ -49,7 +53,7 @@ export default {
     }
   },
   mounted(){
-    
+
   },
   methods: {
     login(){
@@ -125,6 +129,14 @@ input[type="submit"]:hover{
 input[type="submit"]:active{
   background-color: #c00000;
   color: white;
+}
+
+.status_message {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin: 25px;
+  font-size: 120%;
 }
 
 </style>

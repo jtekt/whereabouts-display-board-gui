@@ -2,9 +2,6 @@
 	path = src/components/vue_modal
 	url = https://github.com/maximemoreillon/vue_modal.git
 
-[submodule "src\\components\\jtekt_vue_layouting_components"]
-	path = src\\components\\jtekt_vue_layouting_components
-	url = https://github.com/maximemoreillon/jtekt_vue_layouting_components.git
 [submodule "src/components/jtekt_vue_template"]
 	path = src/components/jtekt_vue_template
 	url = https://github.com/maximemoreillon/jtekt_vue_template.git

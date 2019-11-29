@@ -7,6 +7,7 @@ export default new Vuex.Store({
   state: {
 
     user: null,
+    authenticating: false,
 
     connection_status: {
       internal_connected: true,
@@ -18,6 +19,7 @@ export default new Vuex.Store({
     node_id: "",
 
     employees: [],
+    employees_loading: false,
   },
   mutations: {
 
@@ -25,6 +27,9 @@ export default new Vuex.Store({
     update_user_info(state, new_user_info){
       console.log("update user info")
       state.user = new_user_info
+    },
+    set_authenticating(state, new_authenticating_state){
+      state.authenticating = new_authenticating_state
     },
 
     // Managing connection status
@@ -75,6 +80,9 @@ export default new Vuex.Store({
         }
 
       })
+    },
+    set_employees_loading(state, loading){
+      state.employees_loading = loading;
     },
   },
   actions: {
