@@ -1,7 +1,9 @@
 <template>
   <div class="login_view">
 
-    <div class="status_message" v-if="$store.state.authenticating">
+    <div
+      class="status_message"
+      v-if="$store.state.authenticating">
       <div class="loader"/>
     </div>
 
@@ -9,6 +11,11 @@
       class="login_form"
       v-else-if="!$store.state.user"
       v-on:submit.prevent="login()">
+
+      <div v-if="unauthorized_message" class="unauthorized_message">
+        {{unauthorized_message}}
+      </div>
+
       <input type="text" v-model="credentials.email" placeholder="e-mail address">
       <input type="password" v-model="credentials.password" placeholder="password">
       <input type="submit" value="login">
@@ -16,6 +23,7 @@
         デフォルトのパスワード：社員番号<br>
         （最初の００あってもなくても）
       </div>
+
     </form>
     <form
       class="login_form"
@@ -49,15 +57,26 @@ export default {
       credentials: {
         email: "",
         password: "",
-      }
+
+      },
+
+      unauthorized_message: "",
     }
   },
   mounted(){
 
   },
+  sockets: {
+    unauthorized(data) {
+      console.log("unauthorized")
+      this.unauthorized_message = data;
+
+    },
+  },
   methods: {
     login(){
       console.log("logging in")
+      this.unauthorized_message = "";
       this.$socket.client.emit('credentials_authentication', {
         credentials: {
           email: this.credentials.email,
@@ -66,6 +85,7 @@ export default {
       } )
     },
     logout(){
+      this.unauthorized_message = "";
       this.$socket.client.emit('logout', {})
     },
   }
@@ -137,6 +157,10 @@ input[type="submit"]:active{
   text-align: center;
   margin: 25px;
   font-size: 120%;
+}
+
+.unauthorized_message {
+  color: #c00000;
 }
 
 </style>

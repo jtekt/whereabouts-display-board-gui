@@ -77,6 +77,7 @@ export default {
       // Delete local user info
       this.$store.commit('update_user_info', null);
 
+      // user is no longer authenticating
       this.$store.commit('set_authenticating', false);
 
       // NOT REALLY CLEAN
