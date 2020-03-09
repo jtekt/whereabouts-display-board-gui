@@ -30,36 +30,30 @@ export default {
       this.$store.commit("set_node_id", this.$cookies.get('node_id'))
     }
 
+
   },
   sockets: {
     connect() {
       console.log('[WS] socket connected to external server')
       this.$store.commit('external_connection_status', true)
 
-      // Authentication using JWT after connection if possible
-
-      // Check if JWT present in query
-      const params = new URLSearchParams(location.search)
-      if(params.get('jwt')) this.$cookies.set('jwt', params.get('jwt'))
 
       // Check if possible to authentify using a JWT
+      console.log("Checking if JWT present in cookies")
       if(this.$cookies.get('jwt')){
 
         console.log("JWT is present in cookies")
-        this.logging_in = true;
         this.$socket.client.emit('token_authentication', {
           jwt: this.$cookies.get('jwt')
         })
 
         this.$store.commit('set_authenticating', true);
-
-
-
         // Does not need to go to the login screen
       }
       else {
         // if no JWT exists, then the client must authenticate using credentials
         // NOT REALLY CLEAN
+        console.log("JWT NOT present in cookies, redirecting to login view")
         if(this.$route.path !== '/login') this.$router.push('/login')
       }
       // WILL NOT TRY TO GET EMPLOYEES HERE

@@ -64,10 +64,32 @@ export default {
   },
   mounted(){
     // The user might have passed the desired node id via query
-    const params = new URLSearchParams(location.search)
-    if(params.get('node_id')) this.$store.commit("set_node_id", params.get('node_id'))
+    if(this.$route.query.node_id) {
+      console.log("Node ID present in query")
+      this.$store.commit("set_node_id", this.$route.query.node_id)
+    }
+    else {
+      console.log('Node ID NOT present in query')
+    }
 
-    if(!this.$store.state.user) this.$router.push('/login');
+    // Check if JWT present in query
+    console.log("Checking if JWT present in query")
+    if(this.$route.query.jwt){
+      console.log('JWT present in query')
+      this.$cookies.set('jwt', this.$route.query.jwt)
+    }
+    else {
+      console.log("JWT is NOT present in query")
+    }
+
+    // If not logged in, move to login page
+    // MIGHT NOT BE NEEDED HERE
+
+    if(!this.$store.state.user) {
+      console.log("User is not logged in, redirecting to login page")
+      this.$router.push('/login')
+    }
+
 
     // get employees
     // MIGHT NOT BE CONNECTED YET!!

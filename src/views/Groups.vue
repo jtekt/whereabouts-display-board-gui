@@ -38,7 +38,10 @@ export default {
     }
   },
   mounted(){
-    if(!this.$store.state.user) this.$router.push('/login')
+    if(!this.$store.state.user){
+      console.log("User is not logged in, redirecting to login page")
+      this.$router.push('/login')
+    }
     else this.$socket.client.emit('get_company_structure', {})
   },
   methods: {

@@ -41,7 +41,7 @@ export default new Vuex.Store({
     },
 
 
-    // managing node (unit) info
+    // managing node/unit/group info
     update_node_info(state,new_node_info){
       state.node = new_node_info
     },
@@ -55,7 +55,7 @@ export default new Vuex.Store({
     },
 
 
-    // Managing employees
+    // Managing list of employees
     delete_all(state){
       state.employees.splice(0,state.employees.length);
     },
