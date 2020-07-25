@@ -5,18 +5,26 @@
     <div
       class="name_cell"
       v-on:click="toggle_presence"
-      v-bind:class="{present: presence, loading: employee.presence === 'loading'}">
-      {{employee.name_kanji}}
+      v-bind:class="{present: user_is_present, loading: user.properties.presence === 'loading'}">
+
+      {{user.properties.name_kanji
+        ||user.properties.display_name
+        || 'Unnamed user'}}
+
     </div>
 
+    <div class="vertical_bar" />
+
     <!-- location cell -->
+    <!-- If not in edit mode -->
     <div
       class="location_cell"
       v-if="!location_edit_mode"
       v-on:click="enable_location_edition()"
-      v-html="employee.current_location">
+      v-html="user.properties.current_location">
     </div>
 
+    <!-- If in edit mode -->
     <form
       v-else
       class="location_cell location_edit_form"
@@ -25,18 +33,31 @@
       <input
         ref="location_input"
         type="search"
-        v-model="employee_copy.current_location"
+        v-model="user_copy.properties.current_location"
         placeholder="行先"
         list="location_input_candidates">
 
       <!-- A few premade options -->
-      <datalist style="display:none;" id="location_input_candidates">
-        <option v-for="option in premade_options" v-bind:value="option"/>
+      <datalist
+        style="display:none;"
+        id="location_input_candidates">
+        <option
+          v-for="option in premade_options"
+          v-bind:value="option"/>
       </datalist>
 
       <!-- controls -->
-      <span class="mdi mdi-check icon_button" v-on:click="update_location()"></span>
-      <span class="mdi mdi-close icon_button" v-on:click="location_edit_mode = false"></span>
+      <button
+        type="button"
+        @click="update_location()">
+        <check-icon />
+      </button>
+
+      <button
+        type="button"
+        @click="location_edit_mode = false">
+        <close-icon />
+      </button>
 
     </form>
 
@@ -44,27 +65,42 @@
 </template>
 
 <script>
+import Loader from '@moreillon/vue_loader'
+
+import CheckIcon from 'vue-material-design-icons/Check.vue'
+import CloseIcon from 'vue-material-design-icons/Close.vue'
+
 export default {
-  name: 'Employee',
+  name: 'User',
   props: {
-    employee: Object,
+    user: Object,
+  },
+  components: {
+    Loader,
+
+    CheckIcon,
+    CloseIcon,
   },
   data(){
     return{
       location_edit_mode: false,
 
-      // needs to be in data because v-model to input
-      employee_copy: null,
+      user_copy: null,
 
       // premade location options
-      premade_options: ["居室","帰宅","年休","出張"]
+      premade_options: [
+        "居室",
+        "帰宅",
+        "年休",
+        "出張"
+      ]
     }
   },
   methods: {
 
     enable_location_edition(){
       // Changing presence while editing location will override the location
-      this.employee_copy = JSON.parse(JSON.stringify(this.employee))
+      this.user_copy = JSON.parse(JSON.stringify(this.user))
 
       this.location_edit_mode = true;
 
@@ -73,31 +109,47 @@ export default {
     },
 
     update_location(){
-      this.location_edit_mode = false;
-      this.$socket.client.emit('update_back_end', this.employee_copy)
+
+      this.location_edit_mode = false
 
       // Loader
-      this.employee.current_location = "updating..."
+      this.user.properties.current_location = "updating..."
 
+      this.update_user()
 
     },
     toggle_presence(){
 
-      this.employee_copy = JSON.parse(JSON.stringify(this.employee))
+      this.user_copy = JSON.parse(JSON.stringify(this.user))
 
       // Toggle state
-      if(this.employee_copy.presence === "present") this.employee_copy.presence = "absent";
-      else this.employee_copy.presence = "present"
+      if(this.user_is_present) this.user_copy.properties.presence = "absent"
+      else this.user_copy.properties.presence = "present"
 
-      this.$socket.client.emit('update_back_end', this.employee_copy)
+      // A bit dirty
+      this.user.properties.presence = "loading"
 
-      this.employee.presence = "loading"
+      this.update_user()
+
+
+
     },
+    update_user(){
+      let user_id = this.user.identity.low
+      let url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/users/${user_id}`
+      let body = {
+        presence: this.user_copy.properties.presence,
+        current_location: this.user_copy.properties.current_location,
+      }
+      this.axios.patch(url,body)
+      .then(() => {
+      })
+      .catch((error) => {console.log(error)})
+    }
   },
   computed: {
-    presence(){
-      if(this.employee.presence === "present") return true;
-      else return false;
+    user_is_present(){
+      return this.user.properties.presence === "present"
     }
   }
 }
@@ -105,9 +157,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-* {
-  box-sizing: border-box;
-}
 .employee {
   /* IE fallback behavior */
   flex-grow: 1;
@@ -117,18 +166,27 @@ export default {
   display: flex;
 
   /* visuals */
-  border-radius: 5px;
+  border-radius: 0.25em;
   border: 1px solid #aaaaaa;
 
-  margin: 5px;
+  margin: 0.25em;
 
   font-size: 3.5vmin;
+  padding: 0.25em;
 
 }
 
-.name_cell, .location_cell, .location_edit_form  {
-  margin: 5px;
-  padding: 5px;
+.employee > *  {
+  /* not too usre about horizontal padding here */
+  padding: 0.25em;
+}
+
+.employee > *:not(:last-child) {
+  margin-right: 0.25em;
+}
+
+.vertical_bar {
+  border-left: 1px solid #aaaaaa;
 }
 
 .name_cell, .location_cell{
@@ -137,9 +195,11 @@ export default {
 }
 
 .name_cell {
-  width: 35%;
+  flex-basis: 35%;
+  flex-grow: 0;
+  flex-shrink: 0;
 
-  border-radius: 5px;
+  border-radius: 0.25em;
 
   user-select: none;
   transition:
@@ -150,13 +210,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  /*
-  display: flex;
-  align-items: center;
-  */
-
-
 
 }
 
@@ -181,8 +234,8 @@ export default {
 }
 
 .location_cell, .location_edit_form{
-  width: 65%;
-  border-left: 1px solid #aaaaaa;
+  flex-grow: 1;
+
 }
 
 .location_cell {
@@ -195,29 +248,16 @@ export default {
   align-items: stretch;
 }
 
-.location_edit_form .icon_button{
-  border-radius: 5px;
-  border: 1px solid #444444;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-
-  transition: background-color 0.1s;
-}
-
-.location_edit_form .icon_button:hover{
-  background-color: #dddddd;
-}
-
-.location_edit_form > *{
-  margin: 0 5px;
+.location_edit_form > *:not(:last-child){
+  margin-right: 0.25em;
 }
 
 .location_edit_form input[type="search"]{
-  border-radius: 5px;
+  border-radius: 0.25em;
   outline: none;
   border: 1px solid #444444;
   text-align: center;
+
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 0;

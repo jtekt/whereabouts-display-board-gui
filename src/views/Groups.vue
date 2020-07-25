@@ -1,84 +1,89 @@
 <template>
-  <div class="groups_view">
+  <div class="group_selection">
+    <h1>Groups</h1>
 
-    <div class="corporate_structure_container" v-if="company_structure.length > 0">
-
-      <CorporateStructureNode
-        v-on:select_node="select_node($event)"
-        v-for="division in company_structure"
-        v-bind:node_data="division"/>
+    <div
+      class="group"
+      v-for="group in groups"
+      :key="group.identity.low"
+      @click="select_group(group.identity.low)" >
+      {{group.properties.name}}
 
     </div>
 
-    <!-- Loading corporate structure -->
-    <div v-else class="corporate_structure_loader">
-      <div class="loader"/>
-    </div>
 
-    <!-- overlay to show connection problems -->
-    <DisconnectionWarning/>
 
   </div>
 
 </template>
 
 <script>
-import CorporateStructureNode from '@/components/CorporateStructureNode.vue'
-import DisconnectionWarning from '@/components/DisconnectionWarning.vue'
 
 export default {
   name: 'Groups',
   components: {
-    CorporateStructureNode,
-    DisconnectionWarning
+
   },
   data(){
     return {
-      company_structure: [],
+      groups: [],
     }
   },
   mounted(){
-    if(!this.$store.state.user){
-      console.log("User is not logged in, redirecting to login page")
-      this.$router.push('/login')
-    }
-    else this.$socket.client.emit('get_company_structure', {})
+    this.get_groups()
   },
   methods: {
-    select_node(node_id){
+    get_groups() {
+      //let url = `${process.env.VUE_APP_GROUP_MANAGER_API_URL}/members/self/groups`
+      let url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/members/self/groups`
+      this.axios.get(url)
+      .then( (response) => {
+        this.groups = []
+        response.data.forEach((record) => {
+          let group = record._fields[record._fieldLookup.group]
+          this.groups.push(group)
+        })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    },
+    select_group(group_id){
+      this.$router.push({path: '/', query: { group_id: group_id } })
+
+
+      /*
 
       // Save the node id in the store
       this.$store.commit("set_node_id", node_id);
 
       // Get the employees of the node
-      this.$socket.client.emit('get_employees_belonging_to_node',this.$store.state.node_id);
+      this.$socket.client.emit('get_employees_belonging_to_node', this.$store.state.node_id);
       this.$store.commit('set_employees_loading', true);
 
       // Go back to main view
-      if(this.$route.path !== '/') this.$router.push({path: '/', query: { node_id: this.$store.state.node_id } })
+      this.$router.push({path: '/', query: { node_id: this.$store.state.node_id } })
+      */
 
     },
   },
+  /*
   sockets: {
     company_structure(data){
       console.log("Got company structure")
       this.company_structure = data;
     },
   }
+  */
 }
 </script>
 
 <style scoped>
-.corporate_structure_container{
-  margin-top: 10px;
-  max-height: 75vh;
-  overflow-y: auto;
+.group {
+  cursor: pointer;
 }
 
-
-.corporate_structure_loader {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
+.group:hover {
+  color: #c00000;
 }
 </style>

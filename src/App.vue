@@ -1,40 +1,54 @@
 <template>
   <div id="app">
     <AppTemplate
-      applicationName="行先掲示板"
-      v-bind:navigation="navigation"/>
+      authenticate
+      applicationName="行先掲示板">
+
+      <template v-slot:navigation>
+        <router-link :to="{ path: '/', }"><table-icon />Whereabouts</router-link>
+        <router-link :to="{ path: '/groups', }"><account-multiple-icon />Groups</router-link>
+      </template>
+
+    </AppTemplate>
+
   </div>
 </template>
 
 <script>
-import AppTemplate from '@/components/jtekt_vue_template/AppTemplate.vue'
+import AppTemplate from '@moreillon/vue_application_template_flex'
+
+import TableIcon from 'vue-material-design-icons/Table.vue'
+import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
 
 export default {
   name: 'app',
   components: {
-    AppTemplate
+    AppTemplate,
+    TableIcon,
+    AccountMultipleIcon
   },
   data(){
-    return{
-      navigation : [
-        {route: '/', label: 'Home', icon: 'home'},
-        {route: '/groups', label: 'Groups', icon: 'account-group'},
-      ]
+    return {
+
     }
   },
   mounted(){
     // Check if node_id is available in cookies
     // If so, set node id accordingly
+    /*
     if(this.$cookies.get('node_id')){
       console.log("node_id present in cookies, requesting employees")
       this.$store.commit("set_node_id", this.$cookies.get('node_id'))
     }
+    */
 
 
   },
   sockets: {
     connect() {
-      console.log('[WS] socket connected to external server')
+      console.log('[WS] connected')
+
+      /*
       this.$store.commit('external_connection_status', true)
 
 
@@ -49,6 +63,7 @@ export default {
 
         this.$store.commit('set_authenticating', true);
         // Does not need to go to the login screen
+
       }
       else {
         // if no JWT exists, then the client must authenticate using credentials
@@ -57,10 +72,13 @@ export default {
         if(this.$route.path !== '/login') this.$router.push('/login')
       }
       // WILL NOT TRY TO GET EMPLOYEES HERE
+      */
     },
     disconnect(){
-      console.log('[WS] socket disconnected from external server')
+      console.log('[WS] socket disconnected')
+      /*
       this.$store.commit('external_connection_status', false)
+      */
     },
     unauthorized(data) {
       console.log("unauthorized")
@@ -113,7 +131,7 @@ export default {
       console.log("internal_server_disconnected")
       this.$store.commit('internal_connection_status',false);
     },
-
+    /*
     // THOSE EVENTS COULD BE MOVED TO THE HOME VIEW
     delete_and_create_all(data) {
       console.log("delete_and_create_all")
@@ -133,20 +151,18 @@ export default {
       console.log('update_some')
       this.$store.commit('update_some',data.employees);
     },
+    */
 
 
 
   },
 
-  methods: {
-
-
-  }
 }
 </script>
 
 <style>
 
+/* What loader is this? */
 .loader {
   margin: 25px;
   width: 20vmin;
@@ -165,5 +181,48 @@ export default {
   0% {transform: rotate(0deg);}
   100% {transform: rotate(360deg);}
 }
+
+
+
+button {
+  border: none;
+  background-color: transparent;
+  color: black;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: color 0.25s, border-color 0.25s;
+}
+
+button:hover{
+  color: #c00000;
+}
+
+button:disabled {
+  color: #dddddd;
+  cursor: not-allowed;
+}
+
+button > *:not(:last-child) {
+  margin-right: 0.25em;
+}
+
+button.bordered {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 0.25em 0.5em;
+}
+
+button.bordered:hover {
+  border-color: #c00000;
+}
+
+button.bordered:disabled {
+  border-color: #dddddd;
+}
+
 
 </style>
