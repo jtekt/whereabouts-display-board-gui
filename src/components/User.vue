@@ -11,9 +11,14 @@
         editable: user_is_current_user,
         }">
 
-      {{user.properties.name_kanji
-        ||user.properties.display_name
-        || 'Unnamed user'}}
+        <span
+          class="user_name">
+          {{user.properties.name_kanji
+          ||user.properties.display_name
+          || 'Unnamed user'}}
+        </span>
+
+
 
     </div>
 
@@ -32,7 +37,7 @@
     <!-- If in edit mode -->
     <form
       v-else
-      class="location_cell location_edit_form"
+      class="location_edit_form"
       v-on:submit.prevent="update_location()">
 
       <input
@@ -54,12 +59,14 @@
       <!-- controls -->
       <button
         type="button"
+        class="green"
         @click="update_location()">
         <check-icon />
       </button>
 
       <button
         type="button"
+        class="red"
         @click="location_edit_mode = false">
         <close-icon />
       </button>
@@ -175,21 +182,17 @@ export default {
 
   /* flex for content */
   display: flex;
+  align-items: stretch;
 
   /* visuals */
   border-radius: 0.25em;
   border: 1px solid #aaaaaa;
 
   margin: 0.25em;
+  padding: 0.25em;
 
   font-size: 3.5vmin;
-  padding: 0.25em;
 
-}
-
-.employee > *  {
-  /* not too usre about horizontal padding here */
-  padding: 0.25em;
 }
 
 .employee > *:not(:last-child) {
@@ -200,15 +203,26 @@ export default {
   border-left: 1px solid #aaaaaa;
 }
 
+
 .name_cell, .location_cell{
+  padding: 0.25em;
+
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+
 
 .editable {
   cursor: pointer;
 }
 
 .name_cell {
+
+  width: 35%;
+  /* flex basis not working */
   flex-basis: 35%;
   flex-grow: 0;
   flex-shrink: 0;
@@ -219,8 +233,12 @@ export default {
   transition:
     background-color 0.5s,
     color 0.5s;
+}
 
+.user_name {
+  width: 100%;
   /* deal with names that are too long */
+  /* does not work if using flex */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -244,17 +262,10 @@ export default {
   animation-timing-function: linear;
 
   color: black;
-
 }
 
 .location_cell, .location_edit_form{
   flex-grow: 1;
-
-}
-
-.location_cell {
-  overflow: hidden;
-  text-overflow: ellipsis; /* NOT WORKING */
 }
 
 .location_edit_form {
@@ -272,13 +283,36 @@ export default {
   border: 1px solid #444444;
   text-align: center;
 
+  font-size: 3.5vmin;
+
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 0;
   min-width: 0;
 }
 
+button {
+  transition: color 0.25s, background-color 0.25s;
+  border-radius: 0.25em;
 
+}
+.green {
+  color: #00c000;
+}
+
+.red {
+  color: #c00000;
+}
+
+.green:hover {
+  color: white;
+  background-color:  #00c000;
+}
+
+.red:hover {
+  color: white;
+  background-color:  #c00000;
+}
 
 @keyframes movingGradient {
   0%{background-position:100% 0%}
