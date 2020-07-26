@@ -9,9 +9,22 @@
         :key="group.identity.low"
         @click="select_group(group.identity.low)" >
 
+        <!--
+        <img
+          class="group_avatar"
+          v-if="group.properties.avatar_src"
+          :src="group.properties.avatar_src">
+
+        <img
+          class="group_avatar"
+          src="@/assets/account-multiple.png"
+          v-else>
+        -->
+
         <span class="group_name">
           {{group.properties.name}}
         </span>
+
       </div>
     </template>
 
@@ -35,11 +48,12 @@
 </template>
 
 <script>
+import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
 
 export default {
   name: 'Groups',
   components: {
-
+    AccountMultipleIcon,
   },
   data(){
     return {
@@ -89,16 +103,18 @@ export default {
     color 0.25s,
     border-color 0.25s,
     background-color 0.25s;
-  padding: 0.25em;
-  margin: 0.25em 0;
+  padding: 0.5em;
+  margin: 0.5em 0;
   border: 1px solid #dddddd;
-}
 
-/*
-.group:not(:last-child) {
-  border-bottom: 1px solid #dddddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 400px;
 }
-*/
 
 .group:hover {
   color: #c00000;
@@ -108,5 +124,15 @@ export default {
 .loader_container {
   text-align: center;
   font-size: 150%;
+}
+
+.group_avatar {
+  margin-right: 0.5em;
+}
+
+img.group_avatar{
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
 }
 </style>

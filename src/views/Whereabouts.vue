@@ -178,11 +178,7 @@ export default {
   transition: color 0.25s;
 }
 .group_name_wrapper h1 {
-  font-size: 6vmin;
   margin-bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .group_name_wrapper p {
