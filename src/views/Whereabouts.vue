@@ -179,6 +179,9 @@ export default {
 }
 .group_name_wrapper h1 {
   margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .group_name_wrapper p {
