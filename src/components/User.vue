@@ -289,11 +289,13 @@ export default {
   flex-shrink: 1;
   flex-basis: 0;
   min-width: 0;
+  width: 0;
 }
 
 button {
   transition: color 0.25s, background-color 0.25s;
   border-radius: 0.25em;
+  padding: 0 0.5em;
 
 }
 .green {
