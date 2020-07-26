@@ -5,7 +5,11 @@
     <div
       class="name_cell"
       v-on:click="toggle_presence"
-      v-bind:class="{present: user_is_present, loading: user.properties.presence === 'loading'}">
+      v-bind:class="{
+        present: user_is_present,
+        loading: user.properties.presence === 'loading',
+        editable: user_is_current_user,
+        }">
 
       {{user.properties.name_kanji
         ||user.properties.display_name
@@ -19,6 +23,7 @@
     <!-- If not in edit mode -->
     <div
       class="location_cell"
+      :class="{editable: user_is_current_user}"
       v-if="!location_edit_mode"
       v-on:click="enable_location_edition()"
       v-html="user.properties.current_location">
@@ -65,8 +70,6 @@
 </template>
 
 <script>
-import Loader from '@moreillon/vue_loader'
-
 import CheckIcon from 'vue-material-design-icons/Check.vue'
 import CloseIcon from 'vue-material-design-icons/Close.vue'
 
@@ -76,7 +79,6 @@ export default {
     user: Object,
   },
   components: {
-    Loader,
 
     CheckIcon,
     CloseIcon,
@@ -99,16 +101,21 @@ export default {
   methods: {
 
     enable_location_edition(){
+
+      if(!this.user_is_current_user) return
+      this.location_edit_mode = true;
+
       // Changing presence while editing location will override the location
       this.user_copy = JSON.parse(JSON.stringify(this.user))
-
-      this.location_edit_mode = true;
 
       // Let the element actuall appear befoe trying to focus
       setTimeout(() => this.$refs.location_input.select(), 100)
     },
 
     update_location(){
+
+      if(!this.user_is_current_user) return
+
 
       this.location_edit_mode = false
 
@@ -120,6 +127,9 @@ export default {
     },
     toggle_presence(){
 
+      if(!this.user_is_current_user) return
+
+
       this.user_copy = JSON.parse(JSON.stringify(this.user))
 
       // Toggle state
@@ -130,8 +140,6 @@ export default {
       this.user.properties.presence = "loading"
 
       this.update_user()
-
-
 
     },
     update_user(){
@@ -150,6 +158,9 @@ export default {
   computed: {
     user_is_present(){
       return this.user.properties.presence === "present"
+    },
+    user_is_current_user(){
+      return this.user.identity.low === this.$store.state.user.identity.low
     }
   }
 }
@@ -191,6 +202,9 @@ export default {
 
 .name_cell, .location_cell{
   text-align: center;
+}
+
+.editable {
   cursor: pointer;
 }
 

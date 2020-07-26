@@ -3,34 +3,11 @@
     class="disconnection_warning"
     v-bind:class="{open: warning_visible}">
 
-    <div class="device_container">
-      <span class="mdi mdi-laptop"></span>
-      <div class="device_label">Client</div>
-    </div>
-
-    <!-- Connection between client and AWS -->
-    <div class="connection">
-      <hr>
-      <span class="mdi mdi-loading" v-if="!$store.state.connection_status.external_connected"></span>
-      <hr>
-    </div>
+    <Loader>Connecting...</Loader>
 
 
-    <div class="device_container">
-      <span class="mdi mdi-server"></span>
-      <div class="device_label">AWS</div>
-    </div>
 
-    <div class="connection">
-      <hr>
-      <span class="mdi mdi-close" v-if="!$store.state.connection_status.internal_connected"></span>
-      <hr>
-    </div>
 
-    <div class="device_container">
-      <span class="mdi mdi-server"></span>
-      <div class="device_label">JTEKT</div>
-    </div>
 
 
 
@@ -38,9 +15,12 @@
 </template>
 
 <script>
+
 export default {
   name: 'DisconnectionWarning',
-
+  props: {
+    visible: Boolean,
+  },
   data(){
     return {
       enabled: false,
@@ -53,7 +33,7 @@ export default {
 
   computed: {
     warning_visible(){
-      return this.enabled && (!this.$store.state.connection_status.external_connected || !this.$store.state.connection_status.internal_connected)
+      return this.enabled && this.visible
     }
   }
 }
@@ -77,6 +57,9 @@ export default {
 
   background-color: #444444; /* fallback for ie */
   background-color: #444444cc;
+
+  color: white;
+  font-size: 6vmin;
 
   /* values which change when opening the modal */
   /* here are the defaults */
@@ -102,74 +85,6 @@ export default {
 }
 
 
-.device_container {
-  text-align: center;
-  color: white;
-  font-size: 4vmin;
-
-}
-
-.device_label{
-  text-align: center;
-}
-
-.device_container > span {
-  font-size: 15vmin;
-  margin: 2vmin;
-
-}
-
-.connection {
-  width: 20vmin;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.connection hr{
-  border: 0.5vmin solid white;
-  width: 100%;
-  margin: 0;
-}
-
-.connection span {
-  margin: 10px;
-  font-size: 10vmin;
-  width: 7vmin;
-  height: 7vmin;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.mdi-close {
-  color: #c00000;
-  animation-name: blinking;
-  animation-duration: 1s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
-
-.mdi-loading {
-  color: transparent;
-
-  border-radius: 100%;
-
-  border: 0.5vmin solid white;
-  border-color: white transparent white transparent;
-
-  animation-name: loader_rotation;
-  animation-duration: 1s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-@keyframes loader_rotation {
-  0% {transform: rotate(0deg);}
-  100% {transform: rotate(360deg);}
-}
 
 @keyframes blinking {
   0% {opacity: 0;}

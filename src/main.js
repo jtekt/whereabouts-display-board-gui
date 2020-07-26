@@ -11,25 +11,31 @@ import VueAxios from 'vue-axios'
 import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'
 
-//import 'url-search-params-polyfill';
-//import '@mdi/font/css/materialdesignicons.css';
-//const socket = io(`${process.env.VUE_APP_WHEREABOUTS_API_URL}`);
-const socket = io(`http://172.16.98.151:8999/`)
+import Loader from '@moreillon/vue_loader'
+
+
+VueCookies.config('100d')
+
+const socket = io(`${process.env.VUE_APP_WHEREABOUTS_API_URL}`)
 
 Vue.use(VueSocketIOExt, socket)
 
 Vue.use(VueCookies)
 Vue.use(VueAxios, axios)
 
-VueCookies.config('100d')
 
+// Registering components
+Vue.component('Loader', Loader)
 
 Vue.config.productionTip = false
 
 
-
-
-
+socket.on('connect', () => {
+  store.commit('set_connected',true)
+})
+socket.on('disconnect', () => {
+  store.commit('set_connected',false)
+})
 
 
 // Redirect to authentication manager if not logged in
@@ -42,6 +48,7 @@ router.beforeEach((to, from, next) => {
     // get employee number
     axios.get(`${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`)
       .then(response => {
+        store.commit('set_current_user', response.data)
         next()
       })
       .catch(error => {

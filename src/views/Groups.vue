@@ -2,19 +2,36 @@
   <div class="group_selection">
     <h1>Groups</h1>
 
-    <div
-      class="group"
-      v-for="group in groups"
-      :key="group.identity.low"
-      @click="select_group(group.identity.low)" >
-      {{group.properties.name}}
+    <template v-if="!loading && groups.length > 0">
+      <div
+        class="group"
+        v-for="group in groups"
+        :key="group.identity.low"
+        @click="select_group(group.identity.low)" >
 
+        <span class="group_name">
+          {{group.properties.name}}
+        </span>
+      </div>
+    </template>
+
+    <!-- If the member is not part of any group -->
+    <div
+      class=""
+      v-if="!loading && groups.length === 0">
+      No groups
+    </div>
+
+    <!-- Loader -->
+    <div
+      v-if="loading"
+      class="loader_container">
+      <Loader>Loading groups...</Loader>
     </div>
 
 
 
   </div>
-
 </template>
 
 <script>
@@ -26,6 +43,8 @@ export default {
   },
   data(){
     return {
+      loading: false,
+      error: null,
       groups: [],
     }
   },
@@ -34,6 +53,7 @@ export default {
   },
   methods: {
     get_groups() {
+      this.loading = true
       //let url = `${process.env.VUE_APP_GROUP_MANAGER_API_URL}/members/self/groups`
       let url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/members/self/groups`
       this.axios.get(url)
@@ -47,43 +67,46 @@ export default {
       .catch((error) => {
         console.log(error)
       })
+      .finally(() => {this.loading = false})
     },
     select_group(group_id){
-      this.$router.push({path: '/', query: { group_id: group_id } })
-
-
-      /*
-
-      // Save the node id in the store
-      this.$store.commit("set_node_id", node_id);
-
-      // Get the employees of the node
-      this.$socket.client.emit('get_employees_belonging_to_node', this.$store.state.node_id);
-      this.$store.commit('set_employees_loading', true);
-
-      // Go back to main view
-      this.$router.push({path: '/', query: { node_id: this.$store.state.node_id } })
-      */
-
+      this.$router.push({
+        name: 'whereabouts',
+        params: {
+          group_id: group_id
+        }
+      })
     },
   },
-  /*
-  sockets: {
-    company_structure(data){
-      console.log("Got company structure")
-      this.company_structure = data;
-    },
-  }
-  */
 }
 </script>
 
 <style scoped>
+
 .group {
   cursor: pointer;
+  transition:
+    color 0.25s,
+    border-color 0.25s,
+    background-color 0.25s;
+  padding: 0.25em;
+  margin: 0.25em 0;
+  border: 1px solid #dddddd;
 }
+
+/*
+.group:not(:last-child) {
+  border-bottom: 1px solid #dddddd;
+}
+*/
 
 .group:hover {
   color: #c00000;
+  border-color: #c00000;
+}
+
+.loader_container {
+  text-align: center;
+  font-size: 150%;
 }
 </style>
