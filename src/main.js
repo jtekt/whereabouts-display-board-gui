@@ -31,17 +31,19 @@ Vue.config.productionTip = false
 
 
 socket.on('connect', () => {
-  store.commit('set_connected',true)
+  // Todo: Authentication
+  let jwt = VueCookies.get('jwt')
+  if(jwt) socket.emit('authentication', {jwt: jwt})
 })
 socket.on('disconnect', () => {
   store.commit('set_connected',false)
 })
-
-
-// Redirect to authentication manager if not logged in
+socket.on('authenticated', () => {
+  store.commit('set_connected',true)
+})
 
 router.beforeEach((to, from, next) => {
-  var jwt = VueCookies.get('jwt')
+  let jwt = VueCookies.get('jwt')
   if (jwt) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
 

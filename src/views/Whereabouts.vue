@@ -81,6 +81,10 @@ export default {
   },
   sockets: {
 
+    authenticated(){
+      this.get_members_of_group()
+    },
+
     members_of_group(received_member_records) {
 
       this.loading = false
