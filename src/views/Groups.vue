@@ -1,84 +1,138 @@
 <template>
-  <div class="groups_view">
+  <div class="group_selection">
+    <h1>Groups</h1>
 
-    <div class="corporate_structure_container" v-if="company_structure.length > 0">
+    <template v-if="!loading && groups.length > 0">
+      <div
+        class="group"
+        v-for="group in groups"
+        :key="group.identity.low"
+        @click="select_group(group.identity.low)" >
 
-      <CorporateStructureNode
-        v-on:select_node="select_node($event)"
-        v-for="division in company_structure"
-        v-bind:node_data="division"/>
+        <!--
+        <img
+          class="group_avatar"
+          v-if="group.properties.avatar_src"
+          :src="group.properties.avatar_src">
 
+        <img
+          class="group_avatar"
+          src="@/assets/account-multiple.png"
+          v-else>
+        -->
+
+        <span class="group_name">
+          {{group.properties.name}}
+        </span>
+
+      </div>
+    </template>
+
+    <!-- If the member is not part of any group -->
+    <div
+      class=""
+      v-if="!loading && groups.length === 0">
+      No groups
     </div>
 
-    <!-- Loading corporate structure -->
-    <div v-else class="corporate_structure_loader">
-      <div class="loader"/>
+    <!-- Loader -->
+    <div
+      v-if="loading"
+      class="loader_container">
+      <Loader>Loading groups...</Loader>
     </div>
 
-    <!-- overlay to show connection problems -->
-    <DisconnectionWarning/>
+
 
   </div>
-
 </template>
 
 <script>
-import CorporateStructureNode from '@/components/CorporateStructureNode.vue'
-import DisconnectionWarning from '@/components/DisconnectionWarning.vue'
+import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
 
 export default {
   name: 'Groups',
   components: {
-    CorporateStructureNode,
-    DisconnectionWarning
+    AccountMultipleIcon,
   },
   data(){
     return {
-      company_structure: [],
+      loading: false,
+      error: null,
+      groups: [],
     }
   },
   mounted(){
-    if(!this.$store.state.user){
-      console.log("User is not logged in, redirecting to login page")
-      this.$router.push('/login')
-    }
-    else this.$socket.client.emit('get_company_structure', {})
+    this.get_groups()
   },
   methods: {
-    select_node(node_id){
-
-      // Save the node id in the store
-      this.$store.commit("set_node_id", node_id);
-
-      // Get the employees of the node
-      this.$socket.client.emit('get_employees_belonging_to_node',this.$store.state.node_id);
-      this.$store.commit('set_employees_loading', true);
-
-      // Go back to main view
-      if(this.$route.path !== '/') this.$router.push({path: '/', query: { node_id: this.$store.state.node_id } })
-
+    get_groups() {
+      this.loading = true
+      //let url = `${process.env.VUE_APP_GROUP_MANAGER_API_URL}/members/self/groups`
+      let url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/members/self/groups`
+      this.axios.get(url)
+      .then( (response) => {
+        this.groups = []
+        response.data.forEach((record) => {
+          let group = record._fields[record._fieldLookup.group]
+          this.groups.push(group)
+        })
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+      .finally(() => {this.loading = false})
+    },
+    select_group(group_id){
+      this.$router.push({
+        name: 'whereabouts',
+        params: {
+          group_id: group_id
+        }
+      })
     },
   },
-  sockets: {
-    company_structure(data){
-      console.log("Got company structure")
-      this.company_structure = data;
-    },
-  }
 }
 </script>
 
 <style scoped>
-.corporate_structure_container{
-  margin-top: 10px;
-  max-height: 75vh;
-  overflow-y: auto;
+
+.group {
+  cursor: pointer;
+  transition:
+    color 0.25s,
+    border-color 0.25s,
+    background-color 0.25s;
+  padding: 0.5em;
+  margin: 0.5em 0;
+  border: 1px solid #dddddd;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 400px;
 }
 
+.group:hover {
+  color: #c00000;
+  border-color: #c00000;
+}
 
-.corporate_structure_loader {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
+.loader_container {
+  text-align: center;
+  font-size: 150%;
+}
+
+.group_avatar {
+  margin-right: 0.5em;
+}
+
+img.group_avatar{
+  width: 1em;
+  height: 1em;
+  object-fit: contain;
 }
 </style>
