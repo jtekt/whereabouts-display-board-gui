@@ -3,29 +3,41 @@
     <h1>Groups</h1>
 
     <template v-if="!loading && groups.length > 0">
-      <div
-        class="group"
-        v-for="group in groups"
-        :key="group.identity.low"
-        @click="select_group(group.identity.low)" >
 
-        <!--
-        <img
-          class="group_avatar"
-          v-if="group.properties.avatar_src"
-          :src="group.properties.avatar_src">
+      <template v-if="official_groups.length > 0">
+        <h2>Company groups</h2>
+        <div
+          class="group"
+          v-for="group in official_groups"
+          :key="group.identity.low"
+          @click="select_group(group.identity.low)" >
 
-        <img
-          class="group_avatar"
-          src="@/assets/account-multiple.png"
-          v-else>
-        -->
+          <span class="group_name">
+            {{group.properties.name}}
+          </span>
 
-        <span class="group_name">
-          {{group.properties.name}}
-        </span>
+        </div>
+      </template>
 
-      </div>
+      <template v-if="non_official_groups.length > 0">
+        <h2>User created groups</h2>
+
+        <div
+          class="group"
+          v-for="group in non_official_groups"
+          :key="group.identity.low"
+          @click="select_group(group.identity.low)" >
+
+          <span class="group_name">
+            {{group.properties.name}}
+          </span>
+
+        </div>
+      </template>
+
+
+
+
     </template>
 
     <!-- If the member is not part of any group -->
@@ -92,6 +104,18 @@ export default {
       })
     },
   },
+  computed: {
+    official_groups(){
+      return this.groups.filter( group => {
+        return group.properties.official
+      })
+    },
+    non_official_groups(){
+      return this.groups.filter( group => {
+        return !group.properties.official
+      })
+    },
+  }
 }
 </script>
 
