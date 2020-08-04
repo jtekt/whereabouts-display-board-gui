@@ -28,6 +28,9 @@ do
   sed -i 's|CONV_VUE_APP_GROUP_MANAGER_API_URL|'${VUE_APP_GROUP_MANAGER_API_URL}'|g' $file
   sed -i 's|CONV_VUE_APP_GROUP_MANAGER_FRONT_URL|'${VUE_APP_GROUP_MANAGER_FRONT_URL}'|g' $file
 
+  sed -i 's|CONV_VUE_APP_WHEREABOUTS_API_URL|'${VUE_APP_WHEREABOUTS_API_URL}'|g' $file
+
+
 done
 
 echo "Starting Nginx"
