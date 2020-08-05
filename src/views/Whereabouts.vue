@@ -84,6 +84,9 @@ export default {
     authenticated(){
       this.get_members_of_group()
     },
+    error(message){
+      console.error(message)
+    },
 
     members_of_group(received_member_records) {
 

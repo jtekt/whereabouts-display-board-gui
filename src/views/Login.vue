@@ -75,8 +75,7 @@ export default {
   },
   methods: {
     login(){
-      console.log("logging in")
-      this.unauthorized_message = "";
+      this.unauthorized_message = ""
       this.$socket.client.emit('credentials_authentication', {
         credentials: {
           email: this.credentials.email,

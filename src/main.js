@@ -62,6 +62,7 @@ router.beforeEach((to, from, next) => {
   else {
     // Unset the authorization header
     delete axios.defaults.headers.common['Authorization']
+    console.error('User is not logged in')
 
     // Redirect to autheirzation ms front end
     // Not needed anymore since now using integrated login form
