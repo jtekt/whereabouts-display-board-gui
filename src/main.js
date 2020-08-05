@@ -43,9 +43,11 @@ socket.on('authenticated', () => {
 })
 
 // DEBUG
+/*
 socket.on('debug', (message) => {
   console.log(message)
 })
+*/
 
 router.beforeEach((to, from, next) => {
   let jwt = VueCookies.get('jwt')
