@@ -43,8 +43,8 @@ socket.on('authenticated', () => {
 })
 
 // DEBUG
-socket.on('rooms', (rooms) => {
-  console.log(rooms)
+socket.on('debug', (message) => {
+  console.log(message)
 })
 
 router.beforeEach((to, from, next) => {
