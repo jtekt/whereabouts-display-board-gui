@@ -159,7 +159,10 @@ export default {
       this.axios.patch(url,body)
       .then(() => {
       })
-      .catch((error) => {console.log(error)})
+      .catch((error) => {
+        if(error.response) console.log(error.response.data)
+        else console.log(error)
+      })
     }
   },
   computed: {
