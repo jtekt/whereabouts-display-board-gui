@@ -42,6 +42,11 @@ socket.on('authenticated', () => {
   store.commit('set_connected',true)
 })
 
+// DEBUG
+socket.on('rooms', (rooms) => {
+  console.log(rooms)
+})
+
 router.beforeEach((to, from, next) => {
   let jwt = VueCookies.get('jwt')
   if (jwt) {
