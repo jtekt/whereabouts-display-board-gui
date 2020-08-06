@@ -21,6 +21,11 @@ export default new Router({
       name: 'whereabouts',
       component: Whereabouts
     },
+    {
+      path: '/debug',
+      name: 'debug',
+      component: () => import('./views/Debug.vue')
+    },
 
   ],
 

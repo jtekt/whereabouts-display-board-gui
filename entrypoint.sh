@@ -30,6 +30,8 @@ do
 
   sed -i 's|CONV_VUE_APP_WHEREABOUTS_API_URL|'${VUE_APP_WHEREABOUTS_API_URL}'|g' $file
 
+  sed -i 's|CONV_VUE_APP_COOKIE_DOMAIN|'${VUE_APP_COOKIE_DOMAIN}'|g' $file
+
 
 done
 
