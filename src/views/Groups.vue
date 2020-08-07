@@ -85,7 +85,7 @@ export default {
     }
   },
   mounted(){
-    this.get_groups()
+    //this.get_groups()
   },
   methods: {
     get_groups() {
@@ -106,7 +106,6 @@ export default {
       .finally(() => {this.loading = false})
     },
     select_group(group){
-
       this.$router.push({
         name: 'whereabouts',
         params: {
