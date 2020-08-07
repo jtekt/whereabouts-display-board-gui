@@ -2,7 +2,7 @@
   <div id="app">
     <AppTemplate
       authenticate
-      :applicationName="`行先予定表 v${version}`">
+      applicationName="行先掲示板">
     </AppTemplate>
 
   </div>
@@ -14,7 +14,6 @@ import AppTemplate from '@moreillon/vue_application_template_flex'
 import TableIcon from 'vue-material-design-icons/Table.vue'
 import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
 
-import pjson from '@/../package.json'
 
 export default {
   name: 'app',
@@ -25,7 +24,6 @@ export default {
   },
   data(){
     return {
-      version: pjson.version
     }
   },
 
