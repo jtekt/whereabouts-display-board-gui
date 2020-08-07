@@ -1,5 +1,7 @@
 <template>
-  <div class="employee">
+  <div
+    class="employee"
+    :class="{self: user_is_current_user}">
 
     <!-- name cell -->
     <div
@@ -198,6 +200,11 @@ export default {
 
 }
 
+.self {
+  border-width: 3px;
+}
+
+
 .employee > *:not(:last-child) {
   margin-right: 0.25em;
 }
@@ -323,7 +330,6 @@ button {
   0%{background-position:100% 0%}
   100%{background-position:0% 0%}
 }
-
 
 
 

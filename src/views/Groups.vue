@@ -2,6 +2,11 @@
   <div class="group_selection">
     <h1>Groups</h1>
 
+    <GroupPicker
+      class="group_picker"
+      @selection="select_group($event)"/>
+
+    <!--
     <template v-if="!loading && groups.length > 0">
 
       <template v-if="official_groups.length > 0">
@@ -38,21 +43,24 @@
 
 
 
+
     </template>
 
-    <!-- If the member is not part of any group -->
+
     <div
       class=""
       v-if="!loading && groups.length === 0">
       No groups
     </div>
 
-    <!-- Loader -->
     <div
       v-if="loading"
       class="loader_container">
       <Loader>Loading groups...</Loader>
     </div>
+    -->
+
+
 
 
 
@@ -61,11 +69,13 @@
 
 <script>
 import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
+import GroupPicker from '@moreillon/vue_group_picker'
 
 export default {
   name: 'Groups',
   components: {
     AccountMultipleIcon,
+    GroupPicker,
   },
   data(){
     return {
@@ -95,11 +105,12 @@ export default {
       })
       .finally(() => {this.loading = false})
     },
-    select_group(group_id){
+    select_group(group){
+
       this.$router.push({
         name: 'whereabouts',
         params: {
-          group_id: group_id
+          group_id: group.identity.low
         }
       })
     },
@@ -120,7 +131,13 @@ export default {
 </script>
 
 <style scoped>
-
+.group_picker {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 30em;
+  max-height: 500px;
+  text-align: left;
+}
 .group {
   cursor: pointer;
   transition:

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@moreillon/vue_application_template_flex": "^1.1.9",
+    "@moreillon/vue_group_picker": "^0.1.20",
     "babel-polyfill": "^6.26.0",
     "core-js": "^2.6.11",
     "dotenv": "^8.2.0",
