@@ -1,5 +1,6 @@
 stages:
   - containerization
+  - deployment
 
 variables:
   APPLICATION_NAME: whereabouts-front
@@ -15,3 +16,13 @@ containerization:
     - docker push ${DOCKER_IMAGE}
     # Cleanup
     - docker image rm ${DOCKER_IMAGE}
+
+deployment:
+  stage: deployment
+  script:
+    - envsubst < kubernetes_manifest.yml | kubectl apply -f -
+    - kubectl rollout restart deployment/${APPLICATION_NAME}
+  environment:
+    name: production
+    kubernetes:
+      namespace: ${KUBERNETES_NAMESPACE}

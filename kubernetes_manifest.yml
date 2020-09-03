@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whereabouts-front
+  namespace: moreillon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whereabouts-front
+  template:
+    metadata:
+      labels:
+        app: whereabouts-front
+    spec:
+      containers:
+      - name: whereabouts-front
+        image: moreillon/whereabouts-front
+        # Pull new image on restart
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        # Get environment variables from secret
+        envFrom:
+        - secretRef:
+           name: environment-variables
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whereabouts-front
+  namespace: moreillon
+spec:
+  type: ClusterIP
+  selector:
+    app: whereabouts-front
+  ports:
+  - port: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: whereabouts-front
+  namespace: moreillon
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # connect to the certificate issuer
+spec:
+  tls:
+  - hosts:
+    - dest.jtektrdmc.io
+    secretName: whereabouts-front
+  rules:
+  - host: dest.jtektrdmc.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: whereabouts-front
+          servicePort: 80
