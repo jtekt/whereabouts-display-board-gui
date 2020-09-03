@@ -20,9 +20,20 @@ containerization:
 deployment:
   stage: deployment
   script:
-    - envsubst < kubernetes_manifest.yml | kubectl apply -f -
+    # create/update the deployment
+    - envsubst < kubernetes/deployment.yml | kubectl apply -f -
+    # Pull latest image by restarting the deployment
     - kubectl rollout restart deployment/${APPLICATION_NAME}
+    # Create / update the service
+    - envsubst < kubernetes/service.yml | kubectl apply -f -
+    # if a domain name is specified, serve app through an ingress
+    - >
+      if [ -z ${CERTIFICATE_DOMAIN} ];
+      then echo "CERTIFICATE_DOMAIN not set, skipping creation of ingress";
+      else envsubst < kubernetes/ingress.yml | kubectl apply -f -;
+      fi
   environment:
     name: production
     kubernetes:
+      # Obtained from GitLab
       namespace: ${KUBERNETES_NAMESPACE}
