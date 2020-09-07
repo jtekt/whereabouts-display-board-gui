@@ -20,6 +20,7 @@ containerization:
 deployment:
   stage: deployment
   script:
+    # Pull latest image by restarting the deployment
     - kubectl rollout restart deployment/${APPLICATION_NAME}
   environment:
     name: production
