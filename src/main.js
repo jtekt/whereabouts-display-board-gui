@@ -50,7 +50,13 @@ socket.on('debug', (message) => {
 */
 
 router.beforeEach((to, from, next) => {
-  let jwt = VueCookies.get('jwt')
+
+  // Allow JWT to be passed as query parameter
+  // Otherwise look into cookies
+  let jwt = to.query.jwt
+  || to.query.token
+  || VueCookies.get('jwt')
+
   if (jwt) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
 
@@ -61,9 +67,15 @@ router.beforeEach((to, from, next) => {
         next()
       })
       .catch(error => {
-        alert('Cannot authenticate user')
-        if (error.response) console.log(error.response.data)
-        else console.log(error)
+
+        if (error.response){
+          alert(error.response.data)
+          console.log(error.response.data)
+        }
+        else {
+          alert('Cannot authenticate user')
+          console.log(error)
+        }
       })
   }
   else {

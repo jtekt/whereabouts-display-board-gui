@@ -36,9 +36,6 @@ main {
   text-align: center;
 }
 
-h1 {
-  font-size: 6vmin;
-}
 
 button {
   border: none;

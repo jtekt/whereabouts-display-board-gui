@@ -4,15 +4,23 @@
     <router-link
       class="group_name_wrapper"
       :to="{ name: 'groups'}">
-      <h1 v-if="group">
+
+      <template v-if="group">
+
         <img
           class="group_avatar"
           :src="group.properties.avatar_src"
           v-if="group.properties.avatar_src">
-        <span>{{group.properties.name}}</span>
-      </h1>
+
+        <h1 class="group_name">
+          {{group.properties.name}}
+        </h1>
+      </template>
+
+
       <h1 v-else>行先</h1>
-      <p>(Click to change)</p>
+
+      <div>(Click to change)</div>
     </router-link>
 
 
@@ -148,10 +156,6 @@ export default {
 
 <style scoped>
 
-
-
-
-
 .employees_table {
 
   margin: 0.5em;
@@ -175,32 +179,32 @@ export default {
 }
 
 .group_name_wrapper {
+  margin: 1em;
+  display: block;
   text-align: center;
   text-decoration: none;
   color: CurrentColor;
   transition: color 0.25s;
 }
-.group_name_wrapper h1 {
-  margin-bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.group_name_wrapper p {
-  margin-top: 0;
-}
+
 
 .group_name_wrapper:hover {
   color: #C00000;
 }
 
+.group_name_wrapper h1 {
+  font-size: 6vmin;
+  margin: 0;
+}
+
+
+
 
 .group_avatar {
-  width: 1em;
-  height: 1em;
+  width: 15vmin;
+  height: 15vmin;
   object-fit: contain;
-  margin-right: 0.25em;
 }
 
 .loader_container {
