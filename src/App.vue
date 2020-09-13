@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <AppTemplate
-      authenticate
+      :authenticate="true"
       applicationName="行先掲示板">
     </AppTemplate>
 

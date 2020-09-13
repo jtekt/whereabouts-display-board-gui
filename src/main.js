@@ -51,11 +51,16 @@ socket.on('debug', (message) => {
 
 router.beforeEach((to, from, next) => {
 
-  // Allow JWT to be passed as query parameter
-  // Otherwise look into cookies
-  let jwt = to.query.jwt
+  // Set JWt in cookie if passed as query parameter
+  let query_jwt = to.query.jwt
   || to.query.token
-  || VueCookies.get('jwt')
+
+  if(query_jwt) {
+    VueCookies.set("jwt", query_jwt, '14d', null, process.env.VUE_APP_COOKIE_DOMAIN, null, 'Strict')
+  }
+
+
+  let jwt = VueCookies.get('jwt')
 
   if (jwt) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
