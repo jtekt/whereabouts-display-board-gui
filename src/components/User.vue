@@ -113,7 +113,9 @@ export default {
 
     enable_location_edition(){
 
+      // Only allow usersto edit themselves
       if(!this.user_is_current_user) return
+      
       this.location_edit_mode = true;
 
       // Changing presence while editing location will override the location
@@ -125,6 +127,7 @@ export default {
 
     update_location(){
 
+      // Only allow usersto edit themselves
       if(!this.user_is_current_user) return
 
 
@@ -138,9 +141,10 @@ export default {
     },
     toggle_presence(){
 
+      // Only allow usersto edit themselves
       if(!this.user_is_current_user) return
 
-
+      // Create a copy of the user so as not to edit the actual one
       this.user_copy = JSON.parse(JSON.stringify(this.user))
 
       // Toggle state
@@ -164,8 +168,9 @@ export default {
       .then(() => {
       })
       .catch((error) => {
-        if(error.response) console.log(error.response.data)
-        else console.log(error)
+        alert(`Error while updating user`)
+        if(error.response) console.error(error.response.data)
+        else console.error(error)
       })
     }
   },
