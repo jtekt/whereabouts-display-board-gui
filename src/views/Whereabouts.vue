@@ -1,6 +1,21 @@
 <template>
   <div class="home_view">
 
+    <div class="action_bar">
+      <router-link :to="{ name: 'groups'}">
+        <ArrowLeftIcon />
+        <span>Groups</span>
+      </router-link>
+
+      <div class="spacer"/>
+
+      <a :href="`${publicPath}whereabouts_client.exe`">
+        <DownloadIcon />
+        <span>Client download</span>
+      </a>
+
+    </div>
+
     <router-link
       class="group_name_wrapper"
       :to="{ name: 'groups'}">
@@ -20,7 +35,6 @@
 
       <h1 v-else>行先</h1>
 
-      <div>(Click to change)</div>
     </router-link>
 
 
@@ -65,11 +79,17 @@
 import User from '@/components/User.vue'
 import DisconnectionWarning from '@/components/DisconnectionWarning.vue'
 
+import ArrowLeftIcon from 'vue-material-design-icons/ArrowLeft.vue'
+import DownloadIcon from 'vue-material-design-icons/Download.vue'
+
 export default {
   name: 'Home',
   components: {
     User,
-    DisconnectionWarning
+    DisconnectionWarning,
+
+    ArrowLeftIcon,
+    DownloadIcon
   },
   data(){
     return {
@@ -79,6 +99,8 @@ export default {
       group: null,
 
       members: [],
+
+      publicPath: process.env.BASE_URL
 
     }
   },
@@ -213,4 +235,30 @@ export default {
   text-align: center;
 }
 
+.action_bar {
+  display: flex;
+  font-size: 120%;
+}
+
+.action_bar a {
+  color: CurrentColor;
+  text-decoration: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.25s;
+}
+
+.action_bar a:hover {
+  color: #c00000;
+}
+
+.action_bar a > *:not(:last-child){
+  margin-right: 0.5em;
+}
+
+.spacer {
+  flex-grow: 1;
+}
 </style>
