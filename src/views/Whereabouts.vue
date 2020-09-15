@@ -9,10 +9,12 @@
 
       <div class="spacer"/>
 
+      <!--
       <a :href="`${publicPath}whereabouts_client.exe`">
         <DownloadIcon />
         <span>Client download</span>
       </a>
+      -->
 
     </div>
 
