@@ -79,7 +79,7 @@
     </form>
 
     <div
-      v-if="user.properties.whereabouts_last_update"
+      v-if="user.properties.whereabouts_last_update && !location_edit_mode"
       class="last_update_time">
       {{format_date(user.properties.whereabouts_last_update)}}
     </div>
