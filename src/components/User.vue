@@ -13,10 +13,11 @@
         editable: user_is_current_user,
         }">
 
+        <!-- Inner span so as to not use flex -->
         <span
           class="user_name">
-          {{user.properties.name_kanji
-          ||user.properties.display_name
+          {{ user.properties.name_kanji
+          || user.properties.display_name
           || 'Unnamed user'}}
         </span>
 
@@ -115,7 +116,7 @@ export default {
 
       // Only allow usersto edit themselves
       if(!this.user_is_current_user) return
-      
+
       this.location_edit_mode = true;
 
       // Changing presence while editing location will override the location
@@ -238,9 +239,10 @@ export default {
 
 .name_cell {
 
+
   width: 35%;
-  /* flex basis not working */
-  flex-basis: 35%;
+  /* flex basis weird on Firefox */
+  //flex-basis: 35%;
   flex-grow: 0;
   flex-shrink: 0;
 
@@ -254,6 +256,7 @@ export default {
 
 .user_name {
   width: 100%;
+
   /* deal with names that are too long */
   /* does not work if using flex */
   white-space: nowrap;
