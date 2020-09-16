@@ -37,6 +37,8 @@
       v-html="user.properties.current_location">
     </div>
 
+
+
     <!-- If in edit mode -->
     <form
       v-else
@@ -75,6 +77,12 @@
       </button>
 
     </form>
+
+    <div
+      v-if="user.properties.whereabouts_last_update"
+      class="last_update_time">
+      {{format_date(user.properties.whereabouts_last_update)}}
+    </div>
 
    </div>
 </template>
@@ -173,7 +181,18 @@ export default {
         if(error.response) console.error(error.response.data)
         else console.error(error)
       })
-    }
+    },
+    format_date(date){
+      let options = {
+        year: 'numeric',
+        month:'2-digit',
+        day:'2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+
+      }
+      return new Date(date).toLocaleString('ja-JP', options);
+    },
   },
   computed: {
     user_is_present(){
@@ -189,6 +208,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .employee {
+  position: relative;
   /* IE fallback behavior */
   flex-grow: 1;
   flex-basis: 70vmin;
@@ -223,12 +243,16 @@ export default {
 
 
 .name_cell, .location_cell{
-  padding: 0.25em;
+  padding: 0.5em;
 
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.location_cell {
+  overflow-x: hidden;
 }
 
 
@@ -262,7 +286,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
 }
 
 .name_cell:not(.present){
@@ -340,6 +363,14 @@ button {
 @keyframes movingGradient {
   0%{background-position:100% 0%}
   100%{background-position:0% 0%}
+}
+
+.last_update_time {
+  color: #aaaaaa;
+  position: absolute;
+  bottom: 0.25em;
+  right: 0.5em;
+  font-size: 40%;
 }
 
 
