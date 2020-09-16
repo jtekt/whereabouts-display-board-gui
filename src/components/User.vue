@@ -253,6 +253,7 @@ export default {
 
 .location_cell {
   overflow-x: hidden;
+  white-space: nowrap;
 }
 
 
@@ -370,7 +371,7 @@ button {
   position: absolute;
   bottom: 0.25em;
   right: 0.5em;
-  font-size: 40%;
+  font-size: 50%;
 }
 
 
