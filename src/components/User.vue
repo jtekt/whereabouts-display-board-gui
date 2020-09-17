@@ -10,7 +10,7 @@
       v-bind:class="{
         present: user_is_present,
         loading: user.properties.presence === 'loading',
-        editable: user_is_current_user,
+        editable: user_is_current_user
         }">
 
         <!-- Inner span so as to not use flex -->
@@ -138,6 +138,11 @@ export default {
 
       // Only allow usersto edit themselves
       if(!this.user_is_current_user) return
+
+      // Setting current location as a space if nothing provided
+      if(!this.user_copy.properties.current_location){
+        this.user_copy.properties.current_location = ' ';
+      }
 
 
       this.location_edit_mode = false
