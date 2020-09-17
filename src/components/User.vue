@@ -49,17 +49,18 @@
         ref="location_input"
         type="search"
         v-model="user_copy.properties.current_location"
-        placeholder="行先"
-        list="location_input_candidates">
+        placeholder="行先">
 
       <!-- A few premade options -->
-      <datalist
-        style="display:none;"
-        id="location_input_candidates">
-        <option
+      <div class="premade_options_wrapper">
+        <div
+          class="premade_option"
           v-for="option in premade_options"
-          v-bind:value="option"/>
-      </datalist>
+          v-bind:key="option"
+          @click="premade_option_select(option)">
+          {{option}}
+        </div>
+      </div>
 
       <!-- controls -->
       <button
@@ -113,7 +114,7 @@ export default {
         "帰宅",
         "年休",
         "出張",
-        '在宅勤務',
+        '在宅',
         '出社'
       ]
     }
@@ -196,7 +197,11 @@ export default {
         minute: '2-digit'
 
       }
-      return new Date(date).toLocaleString('ja-JP', options);
+      return new Date(date).toLocaleString('ja-JP', options)
+    },
+    premade_option_select(option){
+      this.user_copy.properties.current_location = option
+      this.update_location()
     },
   },
   computed: {
@@ -318,6 +323,8 @@ export default {
 }
 
 .location_edit_form {
+  position: relative;
+
   display: flex;
   align-items: stretch;
 }
@@ -379,6 +386,34 @@ button {
   font-size: 50%;
 }
 
+.premade_options_wrapper {
+  background-color: white;
+  position: absolute;
+  top: calc(100% + 0.5em);
+  left: 0%;
+  width: calc(100% - 4.5em);
+  z-index: 1;
+  //transform: translateY(-100%);
 
+
+  border-radius: 0.25em;
+  border: 1px solid #aaaaaa;
+  //text-align: left;
+
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.premade_option {
+  padding: 0.5em;
+  cursor: pointer;
+}
+
+.premade_option:not(:last-child){
+  border-bottom: 1px solid #dddddd;
+}
+
+.premade_option:hover {
+  background-color: #eeeeee;
+}
 
 </style>
