@@ -9,13 +9,6 @@
 
       <div class="spacer"/>
 
-      <a
-         v-if="$route.params.group_id == '134121'"
-        :href="`${publicPath}whereabouts_client.exe`">
-        <DownloadIcon />
-        <span>Client download</span>
-      </a>
-
 
     </div>
 
@@ -102,8 +95,6 @@ export default {
       group: null,
 
       members: [],
-
-      publicPath: process.env.BASE_URL
 
     }
   },
