@@ -26,6 +26,11 @@ export default new Router({
       name: 'debug',
       component: () => import('./views/Debug.vue')
     },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('./views/About.vue')
+    },
 
   ],
 

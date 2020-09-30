@@ -6,64 +6,6 @@
       class="group_picker"
       @selection="select_group($event)"/>
 
-    <!--
-    <template v-if="!loading && groups.length > 0">
-
-      <template v-if="official_groups.length > 0">
-        <h2>Company groups</h2>
-        <div
-          class="group"
-          v-for="group in official_groups"
-          :key="group.identity.low"
-          @click="select_group(group.identity.low)" >
-
-          <span class="group_name">
-            {{group.properties.name}}
-          </span>
-
-        </div>
-      </template>
-
-      <template v-if="non_official_groups.length > 0">
-        <h2>User created groups</h2>
-
-        <div
-          class="group"
-          v-for="group in non_official_groups"
-          :key="group.identity.low"
-          @click="select_group(group.identity.low)" >
-
-          <span class="group_name">
-            {{group.properties.name}}
-          </span>
-
-        </div>
-      </template>
-
-
-
-
-
-    </template>
-
-
-    <div
-      class=""
-      v-if="!loading && groups.length === 0">
-      No groups
-    </div>
-
-    <div
-      v-if="loading"
-      class="loader_container">
-      <Loader>Loading groups...</Loader>
-    </div>
-    -->
-
-
-
-
-
   </div>
 </template>
 

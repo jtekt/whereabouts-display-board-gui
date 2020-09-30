@@ -9,6 +9,9 @@
 
       <div class="spacer"/>
 
+      <router-link :to="{ name: 'about'}">
+        <InformationOutlineIcon />
+      </router-link>
 
     </div>
 
@@ -76,7 +79,7 @@ import User from '@/components/User.vue'
 import DisconnectionWarning from '@/components/DisconnectionWarning.vue'
 
 import ArrowLeftIcon from 'vue-material-design-icons/ArrowLeft.vue'
-import DownloadIcon from 'vue-material-design-icons/Download.vue'
+import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue'
 
 export default {
   name: 'Home',
@@ -85,7 +88,8 @@ export default {
     DisconnectionWarning,
 
     ArrowLeftIcon,
-    DownloadIcon
+    InformationOutlineIcon,
+
   },
   data(){
     return {
