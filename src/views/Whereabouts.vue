@@ -214,16 +214,14 @@ export default {
 }
 
 .group_name_wrapper h1 {
-  font-size: 6vmin;
+  font-size: 5vmin;
   margin: 0;
 }
 
 
-
-
 .group_avatar {
-  width: 15vmin;
-  height: 15vmin;
+  width: 12vmin;
+  height: 12vmin;
   object-fit: contain;
 }
 

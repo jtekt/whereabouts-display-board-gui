@@ -234,7 +234,7 @@ export default {
   margin: 0.25em;
   padding: 0.25em;
 
-  font-size: 3.5vmin;
+  font-size: 3.0vmin;
 
 }
 
