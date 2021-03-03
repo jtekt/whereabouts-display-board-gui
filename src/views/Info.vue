@@ -1,6 +1,6 @@
 <template>
   <div class="debug">
-    <h1>Debugging</h1>
+    <h1>Info</h1>
     <p>Cookies domain: {{cookies_domain}}</p>
 
 

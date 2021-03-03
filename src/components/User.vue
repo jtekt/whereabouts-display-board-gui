@@ -6,19 +6,22 @@
     <!-- name cell -->
     <div
       class="name_cell"
-      v-on:click="toggle_presence"
-      v-bind:class="{
-        present: user_is_present,
-        loading: user.properties.presence === 'loading',
-        editable: user_is_current_user
+      @click="toggle_availability()"
+      :class="{
+        party: this.user.whereabouts.availability === 'party',
+        available: user_is_available,
+        loading: user.whereabouts.availability === 'loading',
+        editable: user_can_edit
         }">
 
         <!-- Inner span so as to not use flex -->
         <span
           class="user_name">
-          {{ user.properties.name_kanji
-          || user.properties.display_name
-          || 'Unnamed user'}}
+          {{
+            user.properties.name_kanji
+            || user.properties.display_name
+            || 'Unnamed user'
+          }}
         </span>
 
 
@@ -31,10 +34,10 @@
     <!-- If not in edit mode -->
     <div
       class="location_cell"
-      :class="{editable: user_is_current_user}"
+      :class="{editable: user_can_edit}"
       v-if="!location_edit_mode"
       v-on:click="enable_location_edition()"
-      v-html="user.properties.current_location">
+      v-html="user.whereabouts.message">
     </div>
 
 
@@ -47,8 +50,8 @@
 
       <input
         ref="location_input"
-        type="search"
-        v-model="user_copy.properties.current_location"
+        type="text"
+        v-model="user_copy.whereabouts.message"
         placeholder="行先">
 
       <!-- A few premade options -->
@@ -80,9 +83,9 @@
     </form>
 
     <div
-      v-if="user.properties.whereabouts_last_update && !location_edit_mode"
+      v-if="user.whereabouts.last_update && !location_edit_mode"
       class="last_update_time">
-      {{format_date(user.properties.whereabouts_last_update)}}
+      {{format_date(user.whereabouts.last_update)}}
     </div>
 
    </div>
@@ -123,12 +126,12 @@ export default {
 
     enable_location_edition(){
 
-      // Only allow usersto edit themselves
-      if(!this.user_is_current_user) return
+      // Only allow users to edit themselves
+      if(!this.user_can_edit) return
 
-      this.location_edit_mode = true;
+      this.location_edit_mode = true
 
-      // Changing presence while editing location will override the location
+      // Changing availability while editing location will override the location
       this.user_copy = JSON.parse(JSON.stringify(this.user))
 
       // Let the element actuall appear befoe trying to focus
@@ -138,50 +141,49 @@ export default {
     update_location(){
 
       // Only allow usersto edit themselves
-      if(!this.user_is_current_user) return
+      if(!this.user_can_edit) return
 
       // Setting current location as a space if nothing provided
-      if(!this.user_copy.properties.current_location){
-        this.user_copy.properties.current_location = ' ';
+      if(!this.user_copy.whereabouts.message){
+        this.user_copy.whereabouts.message = ' ';
       }
 
 
       this.location_edit_mode = false
 
       // Loader
-      this.user.properties.current_location = "updating..."
+      this.user.whereabouts.message = "updating..."
 
       this.update_user()
 
     },
-    toggle_presence(){
+    toggle_availability(){
 
       // Only allow usersto edit themselves
-      if(!this.user_is_current_user) return
+      if(!this.user_can_edit) return
 
       // Create a copy of the user so as not to edit the actual one
       this.user_copy = JSON.parse(JSON.stringify(this.user))
 
       // Toggle state
-      if(this.user_is_present) this.user_copy.properties.presence = "absent"
-      else this.user_copy.properties.presence = "present"
+      if(this.user_is_available) this.user_copy.whereabouts.availability = "unavailable"
+      else this.user_copy.whereabouts.availability = "available"
 
       // A bit dirty
-      this.user.properties.presence = "loading"
+      this.user.whereabouts.availability = "loading"
 
       this.update_user()
 
     },
     update_user(){
-      let user_id = this.user.identity.low
-      let url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/users/${user_id}`
-      let body = {
-        presence: this.user_copy.properties.presence,
-        current_location: this.user_copy.properties.current_location,
+      const user_id = this.user.identity.low || this.user.identity
+      const url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/users/${user_id}`
+      const body = {
+        availability: this.user_copy.whereabouts.availability,
+        message: this.user_copy.whereabouts.message,
       }
       this.axios.patch(url,body)
-      .then(() => {
-      })
+      .then(() => {})
       .catch((error) => {
         alert(`Error while updating user`)
         if(error.response) console.error(error.response.data)
@@ -189,7 +191,7 @@ export default {
       })
     },
     format_date(date){
-      let options = {
+      const options = {
         year: 'numeric',
         month:'2-digit',
         day:'2-digit',
@@ -200,17 +202,29 @@ export default {
       return new Date(date).toLocaleString('ja-JP', options)
     },
     premade_option_select(option){
-      this.user_copy.properties.current_location = option
+      this.user_copy.whereabouts.message = option
       this.update_location()
     },
   },
   computed: {
-    user_is_present(){
-      return this.user.properties.presence === "present"
+    user_is_available(){
+
+      const avilable_words = [
+        'available',
+        'present'
+      ]
+
+      return avilable_words.includes(this.user.whereabouts.availability)
     },
     user_is_current_user(){
-      return this.user.identity.low === this.$store.state.user.identity.low
-    }
+      const current_user_id = this.$store.state.user.identity.low || this.$store.state.user.identity
+      const user_id = this.user.identity.low || this.user.identity
+      return current_user_id === user_id
+    },
+    user_can_edit(){
+      return this.user_is_current_user || this.$store.state.user.properties.isAdmin
+    },
+
   }
 }
 </script>
@@ -299,7 +313,7 @@ export default {
   text-overflow: ellipsis;
 }
 
-.name_cell:not(.present){
+.name_cell:not(.available){
   background-color: #c00000;
   color: white;
 }
@@ -308,7 +322,6 @@ export default {
   background: rgb(255,255,255);
   background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 25%, rgba(192,0,0,1) 50%, rgba(255,255,255,1) 75%, rgba(255,255,255,1) 100%);
   background-size: 400% 400%;
-
 
   animation-name: movingGradient;
   animation-duration: 1s;
@@ -333,7 +346,8 @@ export default {
   margin-right: 0.25em;
 }
 
-.location_edit_form input[type="search"]{
+.location_edit_form input[type="search"],
+.location_edit_form input[type="text"]{
   border-radius: 0.25em;
   outline: none;
   border: 1px solid #444444;
@@ -393,12 +407,10 @@ button {
   left: 0%;
   width: calc(100% - 4.5em);
   z-index: 1;
-  //transform: translateY(-100%);
 
 
   border-radius: 0.25em;
   border: 1px solid #aaaaaa;
-  //text-align: left;
 
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
@@ -414,6 +426,22 @@ button {
 
 .premade_option:hover {
   background-color: #eeeeee;
+}
+
+.name_cell.party{
+  color: green;
+  animation-name: party;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes party {
+  0% {background-color: green; color: yellow;}
+  25% {background-color: red; color: blue;}
+  50% {background-color: yellow; color: green;}
+  75% {background-color: blue; color: red;}
+  100% {background-color: green; color: yellow;}
 }
 
 </style>

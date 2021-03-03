@@ -22,11 +22,6 @@ export default {
     TableIcon,
     AccountMultipleIcon
   },
-  data(){
-    return {
-    }
-  },
-
 }
 </script>
 

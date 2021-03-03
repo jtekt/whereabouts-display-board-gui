@@ -1,6 +1,7 @@
 <template>
   <div class="home_view">
 
+    <!-- Top bar for navigation -->
     <div class="action_bar">
       <router-link :to="{ name: 'groups'}">
         <ArrowLeftIcon />
@@ -15,6 +16,7 @@
 
     </div>
 
+    <!-- Group name -->
     <router-link
       class="group_name_wrapper"
       :to="{ name: 'groups'}">
@@ -50,11 +52,11 @@
       v-if="!loading && members.length > 0"
       class="employees_table">
 
-
+      <!-- Stringifying so as to deal with disableLossLessIntegers -->
       <User
         v-for="user in ordered_members"
         v-bind:user="user"
-        v-bind:key="user.identity.low"/>
+        v-bind:key="JSON.stringify(user.identity)"/>
 
     </div>
 
@@ -108,30 +110,37 @@ export default {
     this.get_members_of_group()
   },
   sockets: {
-
     authenticated(){
       this.get_members_of_group()
     },
     error(message){
+      // I'm really pissed this never gfets called
       console.error(message)
     },
-
     members_of_group(received_member_records) {
 
-      this.loading = false
+      this.loading = false // does not seem to do anything
 
       received_member_records.forEach((received_member_record) => {
 
-        let received_member = received_member_record._fields[received_member_record._fieldLookup.user]
+        const received_member = received_member_record._fields[received_member_record._fieldLookup.user]
           || received_member_record._fields[received_member_record._fieldLookup.employee]
 
-        let found_existing_member = this.members.find((existing_member) => {
-          return existing_member.identity.low === received_member.identity.low
+        // Check if the view already contaisn a user with the same ID
+        const found_index = this.members.findIndex((existing_member) => {
+          const received_member_id = received_member.identity.low
+            || received_member.identity
+
+          const existing_member_id = existing_member.identity.low
+            || existing_member.identity
+
+          return  received_member_id === existing_member_id
         })
 
-        if(found_existing_member) {
-          found_existing_member.properties = received_member.properties
-        }
+        // Update the member's whereabouts if existing already
+        if(found_index > -1) this.$set(this.members,found_index,received_member)
+
+        // else add user
         else this.members.push(received_member)
 
       })
@@ -140,8 +149,8 @@ export default {
   },
   methods: {
     get_group_info(){
-      let group_id = this.$route.params.group_id
-      let url = `${process.env.VUE_APP_GROUP_MANAGER_API_URL}/groups/${group_id}`
+      const group_id = this.$route.params.group_id
+      const url = `${process.env.VUE_APP_GROUP_MANAGER_API_URL}/groups/${group_id}`
       this.axios.get(url)
       .then( (response) => {
         this.group = response.data
@@ -158,8 +167,8 @@ export default {
       // Delete members
       this.members = []
 
-      let group_id = this.$route.params.group_id
-      this.$socket.client.emit('get_members_of_group',{group_id: group_id})
+      const group_id = this.$route.params.group_id
+      this.$socket.client.emit('get_members_of_group', {group_id})
     }
 
   },

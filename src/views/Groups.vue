@@ -32,8 +32,7 @@ export default {
   methods: {
     get_groups() {
       this.loading = true
-      //let url = `${process.env.VUE_APP_GROUP_MANAGER_API_URL}/members/self/groups`
-      let url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/members/self/groups`
+      const url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/members/self/groups`
       this.axios.get(url)
       .then( (response) => {
         this.groups = []
@@ -51,7 +50,7 @@ export default {
       this.$router.push({
         name: 'whereabouts',
         params: {
-          group_id: group.identity.low
+          group_id: group.identity.low || group.identity
         }
       })
     },

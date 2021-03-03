@@ -22,9 +22,9 @@ export default new Router({
       component: Whereabouts
     },
     {
-      path: '/debug',
-      name: 'debug',
-      component: () => import('./views/Debug.vue')
+      path: '/info',
+      name: 'info',
+      component: () => import('./views/Info.vue')
     },
     {
       path: '/about',
