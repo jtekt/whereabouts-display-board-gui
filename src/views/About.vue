@@ -13,6 +13,9 @@
     <p>
       Back-end version: {{back_end_version}}
     </p>
+    <p>
+      Desktop client manual: <a href="行先掲示板_desktop_client_manual.pdf.pdf">download</a>
+    </p>
 
 
 

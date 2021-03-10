@@ -211,7 +211,7 @@ export default {
 
       const avilable_words = [
         'available',
-        'present'
+        'present',
       ]
 
       return avilable_words.includes(this.user.whereabouts.availability)
