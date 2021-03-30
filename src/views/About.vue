@@ -1,5 +1,15 @@
 <template>
   <div>
+    <div class="action_bar">
+      <router-link :to="{ name: 'groups'}">
+        <ArrowLeftIcon />
+        <span>Groups</span>
+      </router-link>
+
+      <div class="spacer"/>
+
+    </div>
+
     <h1>行先掲示板</h1>
     <p>
       A web-based display board to show the whereabouts of team members.
@@ -25,10 +35,15 @@
 
 <script>
 
-// UI elements
+
+import ArrowLeftIcon from 'vue-material-design-icons/ArrowLeft.vue'
+
 import pjson from '@/../package.json'
 export default {
   name: 'About',
+  components: {
+    ArrowLeftIcon
+  },
   data () {
     return {
       application_count: null,
