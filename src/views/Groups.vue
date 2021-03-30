@@ -1,5 +1,17 @@
 <template>
   <div class="group_selection">
+
+    <div class="action_bar">
+
+      <div class="spacer"/>
+
+      <router-link :to="{ name: 'about'}">
+        <InformationOutlineIcon />
+        <span>Info</span>
+      </router-link>
+
+    </div>
+
     <h1>Groups</h1>
 
     <GroupPicker
@@ -11,12 +23,15 @@
 
 <script>
 import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
+import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue'
+
 import GroupPicker from '@moreillon/vue_group_picker'
 
 export default {
   name: 'Groups',
   components: {
     AccountMultipleIcon,
+    InformationOutlineIcon,
     GroupPicker,
   },
   data(){

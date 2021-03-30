@@ -72,5 +72,32 @@ button.bordered:disabled {
   border-color: #dddddd;
 }
 
+.spacer {
+  flex-grow: 1;
+}
+
+.action_bar {
+  display: flex;
+  font-size: 120%;
+}
+
+.action_bar a {
+  color: CurrentColor;
+  text-decoration: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.25s;
+}
+
+.action_bar a:hover {
+  color: #c00000;
+}
+
+.action_bar a > *:not(:last-child){
+  margin-right: 0.5em;
+}
+
 
 </style>
