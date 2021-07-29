@@ -12,7 +12,6 @@ import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'
 
 import Loader from '@moreillon/vue_loader'
-import './registerServiceWorker'
 
 
 VueCookies.config('100d')
@@ -32,8 +31,7 @@ Vue.config.productionTip = false
 
 
 socket.on('connect', () => {
-  //const jwt = VueCookies.get('jwt')
-  const jwt = localStorage.jwt
+  const jwt = VueCookies.get('jwt')
   if(!jwt) {
     console.error(`Token not found in cookies`)
     return
@@ -54,7 +52,6 @@ socket.on('debug', (message) => {
 })
 */
 
-/*
 router.beforeEach((to, from, next) => {
 
   // Set JWt in cookie if passed as query parameter
@@ -99,7 +96,6 @@ router.beforeEach((to, from, next) => {
     // window.location.href = process.env.VUE_APP_AUTHENTICATION_MANAGER_FRONT_URL
   }
 })
-*/
 
 new Vue({
   store,

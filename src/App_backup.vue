@@ -1,21 +1,15 @@
 <template>
-  <AppTemplate
-    :options="options"
-    @user="get_user($event)">
-
-  </AppTemplate>
-  <!-- <div id="app">
+  <div id="app">
     <AppTemplate
       :authenticate="true"
       applicationName="行先掲示板">
     </AppTemplate>
 
-  </div> -->
+  </div>
 </template>
 
 <script>
-//import AppTemplate from '@moreillon/vue_application_template_flex'
-import AppTemplate from '@moreillon/vue_application_template'
+import AppTemplate from '@moreillon/vue_application_template_flex'
 
 import TableIcon from 'vue-material-design-icons/Table.vue'
 import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
@@ -28,24 +22,6 @@ export default {
     TableIcon,
     AccountMultipleIcon
   },
-  data(){
-    return {
-      options: {
-        authenticate: true,
-        title: '行先掲示板',
-        login_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
-        identification_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`
-      }
-    }
-  },
-  methods: {
-    get_user(user){
-      this.$store.commit('set_current_user',user)
-      const jwt = localStorage.jwt
-      if(jwt) this.$socket.client.emit('authentication', {jwt})
-
-    }
-  }
 }
 </script>
 
@@ -101,7 +77,6 @@ button.bordered:disabled {
 }
 
 .action_bar {
-  margin-top: 0.5em;
   display: flex;
   font-size: 120%;
 }
