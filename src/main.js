@@ -12,6 +12,7 @@ import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'
 
 import Loader from '@moreillon/vue_loader'
+import './registerServiceWorker'
 
 
 VueCookies.config('100d')
