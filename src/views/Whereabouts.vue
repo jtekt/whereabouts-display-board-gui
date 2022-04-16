@@ -55,9 +55,9 @@
 
       <!-- Stringifying so as to deal with disableLossLessIntegers -->
       <User
-        v-for="user in ordered_members"
+        v-for="(user, index) in ordered_members"
         v-bind:user="user"
-        v-bind:key="JSON.stringify(user.identity)"/>
+        v-bind:key="`user_${index}`"/>
 
     </div>
 
@@ -85,7 +85,7 @@ import ArrowLeftIcon from 'vue-material-design-icons/ArrowLeft.vue'
 import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue'
 
 export default {
-  name: 'Home',
+  name: 'Whereabouts',
   components: {
     User,
     DisconnectionWarning,
@@ -115,36 +115,24 @@ export default {
       this.get_members_of_group()
     },
     error(message){
-      // I'm really pissed this never gfets called
+      // I'm really annoyed that this never gets called
       console.error(message)
     },
-    members_of_group(received_member_records) {
+    members_of_group(received_members) {
 
       this.loading = false // does not seem to do anything
 
-      received_member_records.forEach((received_member_record) => {
+      received_members.forEach((received_member) => {
+        const found_index = this.members.findIndex( (existing_member) => existing_member._id === received_member._id)
 
-        const received_member = received_member_record._fields[received_member_record._fieldLookup.user]
-          || received_member_record._fields[received_member_record._fieldLookup.employee]
-
-        // Check if the view already contaisn a user with the same ID
-        const found_index = this.members.findIndex((existing_member) => {
-          const received_member_id = received_member.identity.low
-            || received_member.identity
-
-          const existing_member_id = existing_member.identity.low
-            || existing_member.identity
-
-          return  received_member_id === existing_member_id
-        })
-
-        // Update the member's whereabouts if existing already
+        // If user exists, update
         if(found_index > -1) this.$set(this.members,found_index,received_member)
-
         // else add user
         else this.members.push(received_member)
 
       })
+
+
 
     },
   },
@@ -153,8 +141,8 @@ export default {
       const group_id = this.$route.params.group_id
       const url = `${process.env.VUE_APP_GROUP_MANAGER_API_URL}/groups/${group_id}`
       this.axios.get(url)
-      .then( (response) => {
-        this.group = response.data
+      .then( ({data}) => {
+        this.group = data
       })
       .catch((error) => {
         console.log(error)
@@ -175,9 +163,7 @@ export default {
   },
   computed: {
     ordered_members() {
-      return this.members.sort((a, b) => {
-        return a.properties.employee_number - b.properties.employee_number
-      })
+      return this.members.sort((a, b) => a.employee_number - b.employee_number)
     }
   },
 

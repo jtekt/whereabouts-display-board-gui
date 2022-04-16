@@ -8,7 +8,7 @@
       class="name_cell"
       @click="toggle_availability()"
       :class="{
-        party: this.user.whereabouts.availability === 'party',
+        party: user.whereabouts.availability === 'party',
         available: user_is_available,
         loading: user.whereabouts.availability === 'loading',
         editable: user_can_edit
@@ -18,8 +18,8 @@
         <span
           class="user_name">
           {{
-            user.properties.name_kanji
-            || user.properties.display_name
+            user.name_kanji
+            || user.display_name
             || 'Unnamed user'
           }}
         </span>
@@ -112,6 +112,7 @@ export default {
       user_copy: null,
 
       // premade location options
+      // Use ENV
       premade_options: [
         "居室",
         "帰宅",
@@ -176,8 +177,7 @@ export default {
 
     },
     update_user(){
-      const user_id = this.user.identity.low || this.user.identity
-      const url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/users/${user_id}`
+      const url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/users/${this.user_id}`
       const body = {
         availability: this.user_copy.whereabouts.availability,
         message: this.user_copy.whereabouts.message,
@@ -207,6 +207,9 @@ export default {
     },
   },
   computed: {
+    user_id(){
+      return this.user._id
+    },
     user_is_available(){
 
       const avilable_words = [
@@ -217,9 +220,8 @@ export default {
       return avilable_words.includes(this.user.whereabouts.availability)
     },
     user_is_current_user(){
-      const current_user_id = this.$store.state.user.identity.low || this.$store.state.user.identity
-      const user_id = this.user.identity.low || this.user.identity
-      return current_user_id === user_id
+      const current_user_id = this.$store.state.user._id || this.$store.state.user.properties._id
+      return current_user_id === this.user_id
     },
     user_can_edit(){
       return this.user_is_current_user || this.$store.state.user.properties.isAdmin
