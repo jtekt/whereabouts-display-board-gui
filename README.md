@@ -1,29 +1,11 @@
-# whereabouts_front
+# 行先掲示板 GUI
 
-## Project setup
-```
-npm install
-```
+This is the GUI for 行先掲示板, a web application to display the whereabouts of team members.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Environment variables
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+| Variable  | Description |
+| ---  | --- |
+| VUE_APP_WHEREABOUTS_API_URL  | URL of the 行先掲示板 API |
+| VUE_APP_GROUP_MANAGER_API_URL | URL of the group management API |
+| VUE_APP_AUTHENTICATION_API_URL | URL of the authentication API |
