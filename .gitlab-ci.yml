@@ -22,7 +22,7 @@ build:
     - docker build -t ${CONTAINER_IMAGE} .
     - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_TAGGED}
     - docker push ${CONTAINER_IMAGE}
-    - docker push ${CONTAINER_IMAGE_LATEST}
+    - docker push ${CONTAINER_IMAGE_TAGGED}
 
 deploy:
   stage: deploy
