@@ -226,7 +226,8 @@ export default {
     },
     user_is_admin(){
       const current_user = this.$store.state.user
-      return current_user.isAdmin || current_user.properties.isAdmin
+      if(!current_user.properties) return current_user.isAdmin
+      else return current_user.properties.isAdmin
     },
     user_can_edit(){
       return this.user_is_current_user || this.user_is_admin
