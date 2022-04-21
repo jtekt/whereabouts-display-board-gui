@@ -43,7 +43,6 @@ export default {
       this.$store.commit('set_current_user',user)
       const jwt = this.$cookies.get('jwt') || localStorage.jwt
       if(jwt) this.$socket.client.emit('authentication', {jwt})
-
     }
   }
 }

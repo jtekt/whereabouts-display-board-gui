@@ -18,10 +18,6 @@
       Developped and maintained by <a href="https://maximemoreillon.com">Maxime MOREILLON</a>
     </p>
 
-    <p>
-      Desktop client manual: <a href="行先掲示板_desktop_client_manual.pdf">download</a>
-    </p>
-
     <h2>Services</h2>
     <table>
       <tr>
@@ -34,7 +30,7 @@
         :key="`service_${index}`">
         <td>{{service.name}}</td>
         <td>{{service.version}}</td>
-        <td>{{service.url}}</td>
+        <td>{{service.url || 'Undefined'}}</td>
       </tr>
     </table>
 
@@ -69,20 +65,21 @@ export default {
           url: process.env.VUE_APP_WHEREABOUTS_API_URL,
           version: null
         },
-        {
-          name: 'Authentication API',
-          url: process.env.VUE_APP_AUTHENTICATION_API_URL,
-          version: null
-        },
+        
         {
           name: 'Group manager API',
           url: process.env.VUE_APP_GROUP_MANAGER_API_URL,
           version: null
         },
         {
-          name: 'Employee manager API',
-          url: process.env.VUE_APP_EMPLOYEE_MANAGER_API_URL,
-          version: null
+          name: 'Login URL',
+          url: process.env.VUE_APP_LOGIN_URL,
+          version: 'N/A'
+        },
+        {
+          name: 'Identification URL',
+          url: process.env.VUE_APP_IDENTIFICATION_URL,
+          version: 'N/A'
         },
 
       ],
@@ -111,7 +108,7 @@ export default {
 
 <style scoped>
 table {
-  width: 100%;
+  margin-inline: auto;
   border-collapse: collapse;
   table-layout: fixed;
 
@@ -121,11 +118,8 @@ tr:not(:last-child) {
   border-bottom: 1px solid #dddddd;
 }
 
-th {
-  text-align: left;
-}
 td {
-  padding: 0.25em;
+  padding: 0.25em 2em;
 }
 
 </style>
