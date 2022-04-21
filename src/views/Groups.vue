@@ -65,7 +65,7 @@ export default {
       this.$router.push({
         name: 'whereabouts',
         params: {
-          group_id: group.identity.low || group.identity
+          group_id: group._id || group.properties._id
         }
       })
     },
