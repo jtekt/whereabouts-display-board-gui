@@ -20,6 +20,7 @@
           {{
             user.name_kanji
             || user.display_name
+            || user.username
             || 'Unnamed user'
           }}
         </span>
@@ -223,8 +224,12 @@ export default {
       const current_user_id = this.$store.state.user._id || this.$store.state.user.properties._id
       return current_user_id === this.user_id
     },
+    user_is_admin(){
+      const current_user = this.$store.state.user
+      return current_user.isAdmin || current_user.properties.isAdmin
+    },
     user_can_edit(){
-      return this.user_is_current_user || this.$store.state.user.properties.isAdmin
+      return this.user_is_current_user || this.user_is_admin
     },
 
   }
