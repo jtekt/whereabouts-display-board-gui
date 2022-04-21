@@ -33,8 +33,8 @@ export default {
       options: {
         authenticate: true,
         title: '行先掲示板',
-        login_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
-        identification_url: `${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`
+        login_url: process.env.VUE_APP_LOGIN_URL || `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
+        identification_url: process.env.VUE_APP_IDENTIFICATION_URL || `${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`
       }
     }
   },
