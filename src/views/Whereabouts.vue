@@ -115,8 +115,12 @@ export default {
       this.get_members_of_group()
     },
     error(message){
-      // I'm really annoyed that this never gets called
       console.error(message)
+      alert(message)
+    },
+    error_message(message){
+      console.error(message)
+      alert(message)
     },
     members_of_group(received_members) {
 
@@ -145,7 +149,7 @@ export default {
         this.group = data
       })
       .catch((error) => {
-        console.log(error)
+        console.error(error)
       })
     },
     get_members_of_group(){
@@ -156,12 +160,14 @@ export default {
       // Delete members
       this.members = []
 
-      const group_id = this.$route.params.group_id
-      this.$socket.client.emit('get_members_of_group', {group_id})
+      this.$socket.client.emit('get_members_of_group', {group_id: this.group_id})
     }
 
   },
   computed: {
+    group_id() {
+      return this.$route.params.group_id
+    },
     ordered_members() {
       return this.members.sort((a, b) => a.employee_number - b.employee_number)
     }
