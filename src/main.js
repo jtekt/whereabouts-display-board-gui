@@ -14,6 +14,7 @@ import io from 'socket.io-client'
 import Loader from '@moreillon/vue_loader'
 import './registerServiceWorker'
 import vuetify from './plugins/vuetify'
+import i18n from './i18n'
 
 
 VueCookies.config('100d')
@@ -109,5 +110,6 @@ new Vue({
   store,
   router,
   vuetify,
+  i18n,
   render: h => h(App)
 }).$mount('#app')
