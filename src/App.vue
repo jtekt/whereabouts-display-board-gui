@@ -1,20 +1,10 @@
 <template>
   <AppTemplate
     :options="options"
-    @user="get_user($event)">
-
-  </AppTemplate>
-  <!-- <div id="app">
-    <AppTemplate
-      :authenticate="true"
-      applicationName="行先掲示板">
-    </AppTemplate>
-
-  </div> -->
+    @user="get_user($event)"/>
 </template>
 
 <script>
-//import AppTemplate from '@moreillon/vue_application_template_flex'
 import AppTemplate from '@moreillon/vue_application_template'
 
 import TableIcon from 'vue-material-design-icons/Table.vue'

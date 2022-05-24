@@ -127,13 +127,17 @@ export default {
       this.loading = false // does not seem to do anything
 
       received_members.forEach((received_member) => {
-        const found_index = this.members.findIndex( (existing_member) => existing_member._id === received_member._id)
+        const found_index = this.members.findIndex( ({_id}) => _id === received_member._id)
 
         // If user exists, update
-        if(found_index > -1) this.$set(this.members,found_index,received_member)
+        if(found_index > -1) {
+          this.$set(this.members,found_index,received_member)
+        }
         // else add user
-        else this.members.push(received_member)
-
+        else {
+          console.log(`User created: ${received_member._id}`);
+          this.members.push(received_member)
+        }
       })
 
 
