@@ -7,6 +7,10 @@
       <v-list
         dense
         nav >
+        <v-list-item>
+          <LocaleSelector />
+        </v-list-item>
+        <v-divider />
         <v-list-item
           v-for="(item, index) in nav"
           :key="`nav_item_${index}`"
@@ -28,6 +32,7 @@
 
 <script>
 import AppTemplate from '@moreillon/vue_application_template_vuetify'
+import LocaleSelector from './components/LocaleSelector.vue'
 
 
 export default {
@@ -35,6 +40,7 @@ export default {
 
   components: {
     AppTemplate,
+    LocaleSelector
   },
 
   data: () => ({
@@ -54,8 +60,8 @@ export default {
   computed: {
     nav(){
       return [
-        {title: 'Groups', to: {name: 'groups'}, icon: 'mdi-account-multiple'},
-        {title: 'About', to: {name: 'about'}, icon: 'mdi-information-outline'},
+        {title: this.$t('Groups'), to: {name: 'groups'}, icon: 'mdi-account-multiple'},
+        {title: this.$t('About'), to: {name: 'about'}, icon: 'mdi-information-outline'},
       ]
     }
   }

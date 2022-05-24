@@ -299,7 +299,6 @@ export default {
 
   width: 35%;
   /* flex basis weird on Firefox */
-  //flex-basis: 35%;
   flex-grow: 0;
   flex-shrink: 0;
 
