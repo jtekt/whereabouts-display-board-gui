@@ -1,24 +1,20 @@
 <template>
-  <div class="group_selection">
+  <v-card
+    max-width="40rem"
+    class="mx-auto">
 
-    <div class="action_bar">
+    <v-card-title>
+      Groups
+    </v-card-title>
 
-      <div class="spacer"/>
+    <v-card-text>
+      <GroupPicker
+        class="group_picker"
+        @selection="select_group($event)"/>
+    </v-card-text>
+    
 
-      <router-link :to="{ name: 'about'}">
-        <InformationOutlineIcon />
-        <span>Info</span>
-      </router-link>
-
-    </div>
-
-    <h1>Groups</h1>
-
-    <GroupPicker
-      class="group_picker"
-      @selection="select_group($event)"/>
-
-  </div>
+  </v-card>
 </template>
 
 <script>
@@ -87,48 +83,8 @@ export default {
 
 <style scoped>
 .group_picker {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 30em;
-  max-height: 500px;
+  max-height: 70vh;
   text-align: left;
 }
-.group {
-  cursor: pointer;
-  transition:
-    color 0.25s,
-    border-color 0.25s,
-    background-color 0.25s;
-  padding: 0.5em;
-  margin: 0.5em 0;
-  border: 1px solid #dddddd;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 400px;
-}
-
-.group:hover {
-  color: #c00000;
-  border-color: #c00000;
-}
-
-.loader_container {
-  text-align: center;
-  font-size: 150%;
-}
-
-.group_avatar {
-  margin-right: 0.5em;
-}
-
-img.group_avatar{
-  width: 1em;
-  height: 1em;
-  object-fit: contain;
-}
 </style>

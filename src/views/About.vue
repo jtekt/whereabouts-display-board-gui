@@ -1,14 +1,5 @@
 <template>
-  <div>
-
-    <div class="action_bar">
-      <router-link :to="{ name: 'groups'}">
-        <ArrowLeftIcon />
-        <span>Groups</span>
-      </router-link>
-
-      <div class="spacer"/>
-    </div>
+  <v-card>
 
     <h1>行先掲示板</h1>
     <p>
@@ -37,7 +28,7 @@
 
 
 
-  </div>
+  </v-card>
 </template>
 
 <script>

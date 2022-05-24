@@ -22,11 +22,6 @@ export default new Router({
       component: Whereabouts
     },
     {
-      path: '/info',
-      name: 'info',
-      component: () => import('./views/Info.vue')
-    },
-    {
       path: '/about',
       name: 'about',
       component: () => import('./views/About.vue')
