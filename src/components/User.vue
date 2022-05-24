@@ -69,14 +69,14 @@
       <!-- controls -->
       <button
         type="button"
-        class="green"
+        class="green_button"
         @click="update_location()">
         <check-icon />
       </button>
 
       <button
         type="button"
-        class="red"
+        class="red_button"
         @click="location_edit_mode = false">
         <close-icon />
       </button>
@@ -377,20 +377,20 @@ button {
   font-size: 100%;
 
 }
-.green {
+.green_button {
   color: #00c000;
 }
 
-.red {
+.red_button {
   color: #c00000;
 }
 
-.green:hover {
+.green_button:hover {
   color: white;
   background-color:  #00c000;
 }
 
-.red:hover {
+.red_button:hover {
   color: white;
   background-color:  #c00000;
 }

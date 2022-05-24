@@ -1,21 +1,31 @@
 <template>
-  <div class="home_view">
+  <v-card>
 
-    <!-- Top bar for navigation -->
-    <div class="action_bar">
-      <router-link :to="{ name: 'groups'}">
-        <ArrowLeftIcon />
-        <span>Groups</span>
-      </router-link>
+    <v-container v-if="group">
+      <v-row align="center">
+        <v-spacer/>
+        <v-col cols="auto">
+          <v-img
+            height="4em"
+            width="4em"
+            contain
+            :src="group.properties.avatar_src"
+            v-if="group.properties.avatar_src"/>
+          <v-icon
+            size="4em"
+            v-else>
+            mdi-account-group
+          </v-icon>
+        </v-col>
+        <v-col cols="auto" class="text-h3">
+          {{group.properties.name}}
+        </v-col>
+        <v-spacer/>
+      </v-row>
+    </v-container>
 
-      <div class="spacer"/>
-
-      <router-link :to="{ name: 'about'}">
-        <InformationOutlineIcon />
-        <span>Info</span>
-      </router-link>
-
-    </div>
+    
+    
 
     <!-- Group name -->
     <router-link
@@ -24,14 +34,9 @@
 
       <template v-if="group">
 
-        <img
-          class="group_avatar"
-          :src="group.properties.avatar_src"
-          v-if="group.properties.avatar_src">
+        
 
-        <h1 class="group_name">
-          {{group.properties.name}}
-        </h1>
+        
       </template>
 
 
@@ -73,7 +78,7 @@
     <!-- overlay to show connection problems -->
     <DisconnectionWarning :visible="!$store.state.connected"/>
 
-  </div>
+  </v-card>
 </template>
 
 <script>
@@ -130,14 +135,9 @@ export default {
         const found_index = this.members.findIndex( ({_id}) => _id === received_member._id)
 
         // If user exists, update
-        if(found_index > -1) {
-          this.$set(this.members,found_index,received_member)
-        }
+        if(found_index > -1) this.$set(this.members,found_index,received_member)
         // else add user
-        else {
-          console.log(`User created: ${received_member._id}`);
-          this.members.push(received_member)
-        }
+        else this.members.push(received_member)
       })
 
 
