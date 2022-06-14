@@ -2,19 +2,15 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-
 import VueCookies from 'vue-cookies'
-
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-
 import VueSocketIOExt from 'vue-socket.io-extended'
 import io from 'socket.io-client'
-
 import Loader from '@moreillon/vue_loader'
-import './registerServiceWorker'
 import vuetify from './plugins/vuetify'
 import i18n from './i18n'
+import './registerServiceWorker'
 
 
 VueCookies.config('100d')

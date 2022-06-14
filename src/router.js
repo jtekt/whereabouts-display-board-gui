@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Whereabouts from './views/Whereabouts.vue'
 import Groups from './views/Groups.vue'
+import About from './views/About.vue'
+import ClientConfig from './views/ClientConfig.vue'
 
 Vue.use(Router)
 
@@ -22,9 +24,14 @@ export default new Router({
       component: Whereabouts
     },
     {
+      path: '/client_config',
+      name: 'client_config',
+      component: ClientConfig
+    },
+    {
       path: '/about',
       name: 'about',
-      component: () => import('./views/About.vue')
+      component: About
     },
 
   ],

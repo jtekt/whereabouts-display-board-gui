@@ -61,6 +61,7 @@ export default {
     nav(){
       return [
         {title: this.$t('Groups'), to: {name: 'groups'}, icon: 'mdi-account-multiple'},
+        { title: this.$t('Client configuration'), to: { name: 'client_config' }, icon: 'mdi-cogs' },
         {title: this.$t('About'), to: {name: 'about'}, icon: 'mdi-information-outline'},
       ]
     }

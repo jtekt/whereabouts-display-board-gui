@@ -1,5 +1,6 @@
 {
   "message": "hello i18n !!",
   "About": "アプリについて",
-  "Groups": "グループ"
+  "Groups": "グループ",
+  "Client configuration": "クライアントア設定"
 }
