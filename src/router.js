@@ -12,9 +12,9 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
-    { path: '/', redirect: '/groups' },
     {
       path: '/groups',
+      alias: '/',
       name: 'groups',
       component: Groups
     },
