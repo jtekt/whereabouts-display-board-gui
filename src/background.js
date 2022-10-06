@@ -1,9 +1,14 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, session, Menu, Tray } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+import axios from 'axios'
+
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+
+let tray = null
+let win = null
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -12,9 +17,10 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
+    title: '行先掲示板',
     webPreferences: {
       
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -33,15 +39,50 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+
+
+  win.on('minimize', function (event) {
+    event.preventDefault();
+    win.hide();
+  });
+
+
+
+
+
+}
+
+
+const updateAvailability = async (availability) => {
+  const cookies = await session.defaultSession.cookies.get({ name: 'jwt' })
+  if (!cookies.length) throw 'JWT cookie not found'
+  const jwt = cookies[0].value
+  const url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/users/self`
+  const headers = { authorization: `Bearer ${jwt}` }
+  await axios.patch(url, { availability }, { headers })
 }
 
 // Quit when all windows are closed.
-app.on('window-all-closed', () => {
+app.on('window-all-closed', async () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
+
+
+  try {
+    await updateAvailability('unavailable')
+  } catch (error) {
+    console.error(error)
   }
+  finally {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  }
+
+  
+
+
+  
 })
 
 app.on('activate', () => {
@@ -63,6 +104,21 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+
+  updateAvailability('available')
+
+  tray = new Tray('./public/logo.png')
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show App', click: function() {
+        win.show()
+      }
+    },
+  ])
+  tray.setToolTip('This is my application.')
+  tray.setContextMenu(contextMenu)
+
+
 })
 
 // Exit cleanly on request from parent process in development mode.
