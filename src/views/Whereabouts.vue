@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card :loading="loading">
 
     <v-container v-if="group">
       <v-row align="center">
@@ -23,35 +23,6 @@
         <v-spacer/>
       </v-row>
     </v-container>
-
-    
-    
-
-    <!-- Group name -->
-    <router-link
-      class="group_name_wrapper"
-      :to="{ name: 'groups'}">
-
-      <template v-if="group">
-
-        
-
-        
-      </template>
-
-
-      <h1 v-else>行先</h1>
-
-    </router-link>
-
-
-
-    <!-- status messages -->
-    <div
-      class="loader_container"
-      v-if="loading">
-      <Loader/>
-    </div>
 
 
     <div
