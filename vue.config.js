@@ -19,6 +19,9 @@ module.exports = {
       localeDir: 'locales',
       enableInSFC: false,
       enableBridge: false
+    },
+    electronBuilder: {
+      
     }
   }
 }

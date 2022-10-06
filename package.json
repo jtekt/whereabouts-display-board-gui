@@ -1,5 +1,7 @@
 {
   "name": "whereabouts_front",
+  "description": "Whereabouts GUI",
+  "author": "Maxime Moreillon",
   "version": "4.2.3",
   "private": true,
   "scripts": {
@@ -15,7 +17,7 @@
   "main": "background.js",
   "dependencies": {
     "@moreillon/vue_application_template_vuetify": "^1.1.7",
-    "@moreillon/vue_group_picker": "^3.0.2",
+    "@moreillon/vue_group_picker": "^5.0.10",
     "@moreillon/vue_loader": "^1.0.5",
     "@vue/cli-shared-utils": "^5.0.4",
     "babel-polyfill": "^6.26.0",

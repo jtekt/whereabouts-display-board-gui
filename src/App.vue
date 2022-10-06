@@ -46,9 +46,9 @@ export default {
   data: () => ({
     options: {
       title: "行先掲示板",
-      authenticate: true,
       login_url: process.env.VUE_APP_LOGIN_URL || `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
       identification_url: process.env.VUE_APP_IDENTIFICATION_URL || `${process.env.VUE_APP_AUTHENTICATION_API_URL}/v2/whoami`,
+      jwt_storage: 'localStorage',
     },
   }),
 
@@ -57,7 +57,7 @@ export default {
       this.$store.commit('set_current_user',user)
 
       if(!user) return
-      const jwt = this.$cookies.get('jwt')
+      const jwt = this.$cookies.get('jwt') || localStorage.getItem('jwt')
       if (!jwt) return
       this.$socket.client.emit('authentication', { jwt })
     },

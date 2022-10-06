@@ -1,29 +1,33 @@
 <template>
   <v-card>
 
-    <h1>行先掲示板</h1>
-    <p>
-      A web-based display board to show the whereabouts of team members.
-    </p>
-    <p>
-      Developped and maintained by <a href="https://maximemoreillon.com">Maxime MOREILLON</a>
-    </p>
+    <v-card-title>
+      行先掲示板
+    </v-card-title>
 
-    <h2>Services</h2>
-    <table>
-      <tr>
-        <th>Service</th>
-        <th>Version</th>
-        <th>URL</th>
-      </tr>
-      <tr
-        v-for="(service, index) in services"
-        :key="`service_${index}`">
-        <td>{{service.name}}</td>
-        <td>{{service.version}}</td>
-        <td>{{service.url || 'Undefined'}}</td>
-      </tr>
-    </table>
+    <v-card-text>
+      <p>
+        A web-based display board to show the whereabouts of team members.
+      </p>
+      <p>
+        Developped and maintained by <a href="https://maximemoreillon.com">Maxime MOREILLON</a>
+      </p>
+
+      <table>
+        <tr>
+          <th>Service</th>
+          <th>Version</th>
+          <th>URL</th>
+        </tr>
+        <tr v-for="(service, index) in services" :key="`service_${index}`">
+          <td>{{service.name}}</td>
+          <td>{{service.version}}</td>
+          <td>{{service.url || 'Undefined'}}</td>
+        </tr>
+      </table>
+    </v-card-text>
+
+    
 
 
 
@@ -99,6 +103,7 @@ export default {
 
 <style scoped>
 table {
+  width: 100%;
   margin-inline: auto;
   border-collapse: collapse;
   table-layout: fixed;

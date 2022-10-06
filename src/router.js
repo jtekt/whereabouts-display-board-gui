@@ -33,6 +33,11 @@ export default new Router({
       name: 'about',
       component: About
     },
+    {
+      path: '/*',
+      redirect: '/'
+    },
+
 
   ],
 

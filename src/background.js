@@ -7,8 +7,10 @@ import axios from 'axios'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
+
 let tray = null
 let win = null
+let jwt = null
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -34,10 +36,13 @@ async function createWindow() {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
     if (!process.env.IS_TEST) win.webContents.openDevTools()
-  } else {
+  } 
+  else {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
+
+
   }
 
 
@@ -46,14 +51,18 @@ async function createWindow() {
     win.hide();
   });
 
+}
 
+const getToken = async () => {
+  // const cookies = await session.defaultSession.cookies.get({ name: 'jwt' })
+  // if (!cookies.length) throw 'JWT cookie not found'
+  // return cookies[0].value
+  return await win.webContents.executeJavaScript('localStorage.getItem("jwt");', true)
+ 
 }
 
 
 const updateAvailability = async (availability) => {
-  const cookies = await session.defaultSession.cookies.get({ name: 'jwt' })
-  if (!cookies.length) throw 'JWT cookie not found'
-  const jwt = cookies[0].value
   const url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/users/self`
   const headers = { authorization: `Bearer ${jwt}` }
   await axios.patch(url, { availability }, { headers })
@@ -77,10 +86,20 @@ app.on('window-all-closed', async () => {
   }
 
   
-
-
-  
 })
+
+
+const minimizeToTray = () => {
+  // Minimization to tray
+  tray = new Tray('./public/logo.png')
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show App', click: function () { win.show() }
+    },
+  ])
+  tray.setToolTip('行先掲示板')
+  tray.setContextMenu(contextMenu)
+}
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
@@ -102,19 +121,12 @@ app.on('ready', async () => {
   }
   createWindow()
 
+  // Custom actions
+  jwt = await getToken()
   updateAvailability('available')
+  minimizeToTray()
 
-  // Minimization to tray
-  tray = new Tray('./public/logo.png')
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Show App', click: function() {
-        win.show()
-      }
-    },
-  ])
-  tray.setToolTip('行先掲示板')
-  tray.setContextMenu(contextMenu)
+  
 
 
 })
