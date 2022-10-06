@@ -55,6 +55,11 @@ export default {
   methods: {
     get_user(user){
       this.$store.commit('set_current_user',user)
+
+      if(!user) return
+      const jwt = this.$cookies.get('jwt')
+      if (!jwt) return
+      this.$socket.client.emit('authentication', { jwt })
     },
   },
   computed: {

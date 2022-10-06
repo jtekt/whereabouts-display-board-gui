@@ -30,16 +30,8 @@ Vue.config.productionTip = false
 
 
 socket.on('connect', () => {
-
-  const jwt = VueCookies.get('jwt') ||  localStorage.jwt
-  
-  if(!jwt) {
-    console.error(`Token not found in cookies`)
-    return
-  }
-
-  socket.emit('authentication', {jwt})
 })
+
 socket.on('disconnect', () => {
   store.commit('set_connected',false)
 })
