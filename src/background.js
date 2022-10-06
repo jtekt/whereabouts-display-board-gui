@@ -47,9 +47,6 @@ async function createWindow() {
   });
 
 
-
-
-
 }
 
 
@@ -107,6 +104,7 @@ app.on('ready', async () => {
 
   updateAvailability('available')
 
+  // Minimization to tray
   tray = new Tray('./public/logo.png')
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -115,7 +113,7 @@ app.on('ready', async () => {
       }
     },
   ])
-  tray.setToolTip('This is my application.')
+  tray.setToolTip('行先掲示板')
   tray.setContextMenu(contextMenu)
 
 
