@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card max-width="40rem" class="mx-auto">
 
     <v-card-title>
       行先掲示板
