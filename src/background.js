@@ -1,8 +1,9 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Menu, Tray, nativeImage } from 'electron'
+import { app, protocol, BrowserWindow, Menu, Tray, nativeImage} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import axios from 'axios'
+import ElectronShutdownHandler from '@paymoapp/electron-shutdown-handler';
 
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -19,6 +20,8 @@ if (!isDevelopment){
 }
 
 
+
+
 const getToken = async () => {
   // const cookies = await session.defaultSession.cookies.get({ name: 'jwt' })
   // if (!cookies.length) throw 'JWT cookie not found'
@@ -28,6 +31,8 @@ const getToken = async () => {
 }
 
 const updateAvailability = async (availability) => {
+
+  jwt = await getToken()
   const url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/users/self`
   const headers = { authorization: `Bearer ${jwt}` }
   await axios.patch(url, { availability }, { headers })
@@ -64,13 +69,22 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
 
-
   }
 
   // Minimize to tray
-  win.on('minimize', function (event) {
+  win.on('minimize', (event) => {
     event.preventDefault();
     win.hide();
+  });
+
+  ElectronShutdownHandler.setWindowHandle(win.getNativeWindowHandle());
+  ElectronShutdownHandler.blockShutdown('Please wait for some data to be saved');
+
+  ElectronShutdownHandler.on('shutdown', async () => {
+    await updateAvailability('unavailable')
+    ElectronShutdownHandler.releaseShutdown();
+    win.webContents.send('shutdown');
+    app.quit();
   });
 
 
@@ -128,7 +142,6 @@ app.on('ready', async () => {
   createWindow()
 
   // Custom actions
-  jwt = await getToken()
   updateAvailability('available')
   minimizeToTray()
 
