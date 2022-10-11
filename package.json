@@ -2,7 +2,7 @@
   "name": "whereabouts_front",
   "description": "Whereabouts GUI",
   "author": "Maxime Moreillon",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
