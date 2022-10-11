@@ -34,8 +34,11 @@ const updateAvailability = async (availability) => {
 
   jwt = await getToken()
   const url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/users/self`
-  const headers = { authorization: `Bearer ${jwt}` }
-  await axios.patch(url, { availability }, { headers })
+  const options = {
+    headers : { authorization: `Bearer ${jwt}` },
+    timeout: 3000
+  }
+  await axios.patch(url, { availability }, options)
 }
 
 
