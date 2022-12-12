@@ -49,6 +49,10 @@ export default {
       login_url: process.env.VUE_APP_LOGIN_URL || `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
       identification_url: process.env.VUE_APP_IDENTIFICATION_URL || `${process.env.VUE_APP_AUTHENTICATION_API_URL}/v2/whoami`,
       jwt_storage: 'localStorage',
+      header_logo: require('@/assets/jtekt_logo_negative.jpg'),
+      authentication_logo: require('@/assets/jtekt_logo.jpg'),
+      colors: { app_bar: '#000' },
+      author: 'Maxime MOREILLON, JTEKT Corporation',
     },
   }),
 
@@ -73,3 +77,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.header_logo {
+  border-right: 1px solid white;
+}
+</style>
