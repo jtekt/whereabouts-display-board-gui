@@ -3,6 +3,7 @@ stages:
   - deploy
 
 variables:
+<<<<<<< .gitlab-ci.yml
   APPLICATION_NAME: whereabouts-display-board-gui
 
   CONTAINER_IMAGE: ${AWS_ECR_PUBLIC_URL}/${APPLICATION_NAME}
@@ -11,6 +12,17 @@ variables:
   CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
 
   K8S_SERVICE_PORT: 30778
+=======
+  APPLICATION_NAME: whereabouts-front
+
+  CONTAINER_TAG: ${CI_COMMIT_SHORT_SHA}
+  CONTAINER_IMAGE: ${AWS_ECR_URL}/${APPLICATION_NAME}
+  CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CONTAINER_TAG}
+>>>>>>> .gitlab-ci.yml
+
+  K8S_ECR_SECRET_NAME: ecr-credentials
+
+
 
 image: moreillon/ci-dind:4bca50d7
 services:
@@ -23,12 +35,26 @@ build:
   only:
     - master
   before_script:
+<<<<<<< .gitlab-ci.yml
     # Registry login
     - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${AWS_ECR_PUBLIC_URL}
     # Create repository in ECR if it does not exist yet
     - >
       aws ecr-public create-repository --region us-east-1 --repository-name ${APPLICATION_NAME}
       || echo "Repository might have already existed"
+=======
+    # Create repository if needed
+    - >
+      aws ecr create-repository --repository-name ${APPLICATION_NAME}
+      || echo "Repository might have already existed"
+    # Log in to the registry (AWS credentials are stored as GitLab env variables)
+    - >
+      aws ecr get-login-password
+      | docker login
+      --username AWS
+      --password-stdin
+      ${AWS_ECR_URL}
+>>>>>>> .gitlab-ci.yml
   script:
     # Building the container image
     - docker build -t ${CONTAINER_IMAGE} .
@@ -38,12 +64,30 @@ build:
     - docker push ${CONTAINER_IMAGE}
     - docker push ${CONTAINER_IMAGE_TAGGED}
 
+
 deploy:
   stage: deploy
+<<<<<<< .gitlab-ci.yml
   tags:
     - dind
   only:
     - master
+=======
+  only:
+    - master
+  before_script:
+    # Create a secret with ECR credentials for K8s to pull
+    # Here, we use apply to update it
+    # https://stackoverflow.com/questions/47369351/kubectl-apply-vs-kubectl-create
+    - >
+      kubectl create secret docker-registry ${K8S_ECR_SECRET_NAME}
+      --docker-server=${AWS_ECR_URL}
+      --docker-username=AWS
+      --docker-password $(aws ecr get-login-password)
+      --dry-run=client -o yaml
+      | kubectl apply -f -
+
+>>>>>>> .gitlab-ci.yml
   script:
     - envsubst < kubernetes_manifest.yml | kubectl apply -f -
   environment:

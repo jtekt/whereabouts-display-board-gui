@@ -32,38 +32,22 @@ export default {
   },
   data(){
     return {
-      loading: false,
-      error: null,
-      groups: [],
+
     }
   },
   mounted(){
-    //this.get_groups()
+    if (this.$route.path == "/") {
+      const group_id = localStorage.getItem("group_id")
+      if (group_id) this.$router.push({ name: "whereabouts", params: { group_id } })
+    }
+
   },
   methods: {
-    get_groups() {
-      this.loading = true
-      const url = `${process.env.VUE_APP_WHEREABOUTS_API_URL}/members/self/groups`
-      this.axios.get(url)
-      .then( (response) => {
-        this.groups = []
-        response.data.forEach((record) => {
-          let group = record._fields[record._fieldLookup.group]
-          this.groups.push(group)
-        })
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-      .finally(() => {this.loading = false})
-    },
+    
     select_group(group){
-      this.$router.push({
-        name: 'whereabouts',
-        params: {
-          group_id: group._id || group.properties._id
-        }
-      })
+      const group_id = group._id || group.properties._id
+      localStorage.setItem('group_id', group_id)
+      this.$router.push({ name: 'whereabouts', params: { group_id } })
     },
   },
   computed: {

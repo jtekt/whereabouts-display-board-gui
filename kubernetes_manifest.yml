@@ -13,6 +13,7 @@ spec:
         app: ${APPLICATION_NAME}
     spec:
       containers:
+<<<<<<< kubernetes_manifest.yml
         - name: ${APPLICATION_NAME}
           image: ${CONTAINER_IMAGE_TAGGED}
           ports:
@@ -21,6 +22,19 @@ spec:
           envFrom:
             - secretRef:
                 name: environment-variables
+=======
+      - name: ${APPLICATION_NAME}
+        image: ${CONTAINER_IMAGE_TAGGED}
+        ports:
+        - containerPort: 80
+        # Get environment variables from secret
+        envFrom:
+        - secretRef:
+           name: environment-variables
+      imagePullSecrets:
+      - name: ${K8S_ECR_SECRET_NAME}
+
+>>>>>>> kubernetes_manifest.yml
 ---
 apiVersion: v1
 kind: Service

@@ -46,25 +46,40 @@ export default {
   data: () => ({
     options: {
       title: "行先掲示板",
-      authenticate: true,
       login_url: process.env.VUE_APP_LOGIN_URL || `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`,
       identification_url: process.env.VUE_APP_IDENTIFICATION_URL || `${process.env.VUE_APP_AUTHENTICATION_API_URL}/v2/whoami`,
+      jwt_storage: 'localStorage',
+      header_logo: require('@/assets/jtekt_logo_negative.jpg'),
+      authentication_logo: require('@/assets/jtekt_logo.jpg'),
+      colors: { app_bar: '#000' },
+      author: 'Maxime MOREILLON, JTEKT Corporation',
     },
   }),
 
   methods: {
     get_user(user){
       this.$store.commit('set_current_user',user)
+
+      if(!user) return
+      const jwt = this.$cookies.get('jwt') || localStorage.getItem('jwt')
+      if (!jwt) return
+      this.$socket.client.emit('authentication', { jwt })
     },
   },
   computed: {
     nav(){
       return [
         {title: this.$t('Groups'), to: {name: 'groups'}, icon: 'mdi-account-multiple'},
-        { title: this.$t('Client configuration'), to: { name: 'client_config' }, icon: 'mdi-cogs' },
+        // { title: this.$t('Client configuration'), to: { name: 'client_config' }, icon: 'mdi-cogs' },
         {title: this.$t('About'), to: {name: 'about'}, icon: 'mdi-information-outline'},
       ]
     }
   }
 };
 </script>
+
+<style>
+.header_logo {
+  border-right: 1px solid white;
+}
+</style>

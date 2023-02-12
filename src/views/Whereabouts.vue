@@ -25,7 +25,7 @@
     </v-container>
 
 
-    <div
+    <v-card-text
       v-if="!loading && members.length > 0"
       class="employees_table">
 
@@ -35,14 +35,14 @@
         v-bind:user="user"
         v-bind:key="`user_${index}`"/>
 
-    </div>
+    </v-card-text>
 
 
-    <div
+    <v-card-text
       class="status_message"
       v-if="!loading && members.length === 0">
       No member
-    </div>
+    </v-card-text>
 
 
 
