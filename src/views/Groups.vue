@@ -1,68 +1,52 @@
 <template>
-  <v-card
-    max-width="40rem"
-    class="mx-auto">
-
-    <v-card-title>
-      Groups
-    </v-card-title>
+  <v-card max-width="40rem" class="mx-auto">
+    <v-card-title> Groups </v-card-title>
 
     <v-card-text>
-      <GroupPicker
-        class="group_picker"
-        @selection="select_group($event)"/>
+      <GroupPicker class="group_picker" @selection="select_group($event)" />
     </v-card-text>
-    
-
   </v-card>
 </template>
 
 <script>
-import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
-import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue'
+import AccountMultipleIcon from "vue-material-design-icons/AccountMultiple.vue";
+import InformationOutlineIcon from "vue-material-design-icons/InformationOutline.vue";
 
-import GroupPicker from '@moreillon/vue_group_picker'
+import GroupPicker from "@moreillon/vue_group_picker";
 
 export default {
-  name: 'Groups',
+  name: "Groups",
   components: {
     AccountMultipleIcon,
     InformationOutlineIcon,
     GroupPicker,
   },
-  data(){
-    return {
-
-    }
+  data() {
+    return {};
   },
-  mounted(){
+  mounted() {
     if (this.$route.path == "/") {
-      const group_id = localStorage.getItem("group_id")
-      if (group_id) this.$router.push({ name: "whereabouts", params: { group_id } })
+      const group_id = localStorage.getItem("group_id");
+      if (group_id)
+        this.$router.push({ name: "whereabouts", params: { group_id } });
     }
-
   },
   methods: {
-    
-    select_group(group){
-      const group_id = group._id || group.properties._id
-      localStorage.setItem('group_id', group_id)
-      this.$router.push({ name: 'whereabouts', params: { group_id } })
+    select_group(group) {
+      const group_id = group._id || group.properties._id;
+      localStorage.setItem("group_id", group_id);
+      this.$router.push({ name: "whereabouts", params: { group_id } });
     },
   },
   computed: {
-    official_groups(){
-      return this.groups.filter( group => {
-        return group.properties.official
-      })
+    official_groups() {
+      return this.groups.filter((group) => group.properties.official);
     },
-    non_official_groups(){
-      return this.groups.filter( group => {
-        return !group.properties.official
-      })
+    non_official_groups() {
+      return this.groups.filter((group) => !group.properties.official);
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -70,5 +54,4 @@ export default {
   max-height: 70vh;
   text-align: left;
 }
-
 </style>
