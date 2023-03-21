@@ -17,9 +17,6 @@ spec:
           image: ${CONTAINER_IMAGE_TAGGED}
           ports:
             - containerPort: 80
-          env:
-            - name: VUE_APP_LOGIN_HINT
-              value: "2023/03/20から、メールアドレスとPCのパスワードでログインできるようになりました"
           envFrom:
             - secretRef:
                 name: environment-variables
