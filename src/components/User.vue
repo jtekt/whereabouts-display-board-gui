@@ -35,11 +35,7 @@
     ></div>
 
     <!-- If in edit mode -->
-    <form
-      v-else
-      class="location_edit_form"
-      v-on:submit.prevent="update_location()"
-    >
+    <form v-else class="location_edit_form" @submit.prevent="update_location()">
       <input
         ref="location_input"
         type="text"
@@ -60,18 +56,16 @@
       </div>
 
       <!-- controls -->
-      <button type="button" class="green_button" @click="update_location()">
+      <v-btn icon @click="update_location()" type="submit" color="success">
+        <v-icon>mdi-check</v-icon>
+      </v-btn>
+      <!-- <button type="button" class="green_button" @click="update_location()">
         <check-icon />
-      </button>
+      </button> -->
 
-      <button
-        type="button"
-        class="red_button"
-        @click="location_edit_mode = false"
-      >
-        <!-- TODO: use vuetify -->
-        <close-icon />
-      </button>
+      <v-btn icon @click="location_edit_mode = false" color="error">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </form>
 
     <div
@@ -84,18 +78,12 @@
 </template>
 
 <script>
-import CheckIcon from "vue-material-design-icons/Check.vue";
-import CloseIcon from "vue-material-design-icons/Close.vue";
-
 export default {
   name: "User",
   props: {
     user: Object,
   },
-  components: {
-    CheckIcon,
-    CloseIcon,
-  },
+
   data() {
     return {
       location_edit_mode: false,
@@ -319,7 +307,7 @@ export default {
   position: relative;
 
   display: flex;
-  align-items: stretch;
+  align-items: center;
 }
 
 .location_edit_form > *:not(:last-child) {
@@ -333,7 +321,7 @@ export default {
   border: 1px solid #444444;
   text-align: center;
 
-  font-size: 3.5vmin;
+  padding: 0.25em;
 
   flex-grow: 1;
   flex-shrink: 1;
