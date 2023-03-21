@@ -33,6 +33,7 @@ const {
   VUE_APP_LOGIN_URL,
   VUE_APP_IDENTIFICATION_URL,
   VUE_APP_AUTHENTICATION_API_URL,
+  VUE_APP_LOGIN_HINT,
 } = process.env;
 
 export default {
@@ -55,6 +56,7 @@ export default {
       authentication_logo: require("@/assets/jtekt_logo.jpg"),
       colors: { app_bar: "#000" },
       author: "Maxime MOREILLON, JTEKT Corporation",
+      login_hint: VUE_APP_LOGIN_HINT,
     },
   }),
 

@@ -37,9 +37,9 @@ do
   # Whereabouts
   sed -i 's|VUE_APP_WHEREABOUTS_API_URL_PLACEHOLDER|'${VUE_APP_WHEREABOUTS_API_URL}'|g' $file
 
-  # Homepage
+  # Misc
   sed -i 's|VUE_APP_HOMEPAGE_URL_PLACEHOLDER|'${VUE_APP_HOMEPAGE_URL}'|g' $file
-
+  sed -i 's|VUE_APP_LOGIN_HINT_PLACEHOLDER|'${VUE_APP_LOGIN_HINT}'|g' $file
 
 done
 

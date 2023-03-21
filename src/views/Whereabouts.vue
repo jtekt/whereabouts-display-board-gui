@@ -20,8 +20,7 @@
       </v-row>
     </v-container>
 
-    <v-card-text v-if="!loading && members.length > 0" class="employees_table">
-      <!-- Stringifying so as to deal with disableLossLessIntegers -->
+    <v-card-text v-if="!loading && members.length" class="employees_table">
       <User
         v-for="(user, index) in ordered_members"
         :user="user"
@@ -42,17 +41,11 @@
 import User from "@/components/User.vue";
 import DisconnectionWarning from "@/components/DisconnectionWarning.vue";
 
-import ArrowLeftIcon from "vue-material-design-icons/ArrowLeft.vue";
-import InformationOutlineIcon from "vue-material-design-icons/InformationOutline.vue";
-
 export default {
   name: "Whereabouts",
   components: {
     User,
     DisconnectionWarning,
-
-    ArrowLeftIcon,
-    InformationOutlineIcon,
   },
   data() {
     return {
