@@ -20,6 +20,9 @@ spec:
           envFrom:
             - secretRef:
                 name: environment-variables
+          env:
+            - name: VUE_APP_WHEREABOUTS_API_URL
+              value: http://10.115.1.100:30777
 ---
 apiVersion: v1
 kind: Service

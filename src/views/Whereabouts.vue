@@ -51,7 +51,6 @@ export default {
   },
   data() {
     return {
-      // Employees could actually be managed here
       loading: false, // used to distinguish between having no result or still loading
 
       group: null,
