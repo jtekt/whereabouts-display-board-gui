@@ -8,14 +8,8 @@ for file in $ROOT_DIR/js/*.js* $ROOT_DIR/index.html $ROOT_DIR/precache-manifest*
 do
   echo "Processing $file ...";
 
-
-
   sed -i 's|VUE_APP_IDENTIFICATION_URL_PLACEHOLDER|'${VUE_APP_IDENTIFICATION_URL}'|g' $file
   sed -i 's|VUE_APP_LOGIN_URL_PLACEHOLDER|'${VUE_APP_LOGIN_URL}'|g' $file
-  
-  ## Cookie domain
-  sed -i 's|VUE_APP_COOKIE_DOMAIN_PLACEHOLDER|'${VUE_APP_COOKIE_DOMAIN}'|g' $file
-
 
   # Employee manager
   sed -i 's|VUE_APP_EMPLOYEE_MANAGER_URL_PLACEHOLDER|'${VUE_APP_EMPLOYEE_MANAGER_URL}'|g' $file
