@@ -8,6 +8,9 @@ for file in $ROOT_DIR/js/*.js* $ROOT_DIR/index.html $ROOT_DIR/precache-manifest*
 do
   echo "Processing $file ...";
 
+
+  sed -i 's|VUE_APP_WHEREABOUTS_API_URL_PLACEHOLDER|'${VUE_APP_WHEREABOUTS_API_URL}'|g' $file
+
   sed -i 's|VUE_APP_IDENTIFICATION_URL_PLACEHOLDER|'${VUE_APP_IDENTIFICATION_URL}'|g' $file
   sed -i 's|VUE_APP_LOGIN_URL_PLACEHOLDER|'${VUE_APP_LOGIN_URL}'|g' $file
 
@@ -21,7 +24,6 @@ do
   sed -i 's|VUE_APP_GROUP_MANAGER_FRONT_URL_PLACEHOLDER|'${VUE_APP_GROUP_MANAGER_FRONT_URL}'|g' $file
 
   # Whereabouts
-  sed -i 's|VUE_APP_WHEREABOUTS_API_URL_PLACEHOLDER|'${VUE_APP_WHEREABOUTS_API_URL}'|g' $file
 
   # Misc
   sed -i 's|VUE_APP_HOMEPAGE_URL_PLACEHOLDER|'${VUE_APP_HOMEPAGE_URL}'|g' $file
