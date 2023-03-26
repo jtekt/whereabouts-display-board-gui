@@ -15,7 +15,7 @@ import "./registerServiceWorker";
 VueCookies.config("100d");
 
 const { VUE_APP_WHEREABOUTS_API_URL } = process.env;
-console.log(VUE_APP_WHEREABOUTS_API_URL);
+console.log(`[socket.io] Connecting to ${VUE_APP_WHEREABOUTS_API_URL}`);
 
 const socket = io(VUE_APP_WHEREABOUTS_API_URL);
 
@@ -24,18 +24,22 @@ Vue.use(VueSocketIOExt, socket);
 Vue.use(VueCookies);
 Vue.use(VueAxios, axios);
 
-// Registering components
 Vue.component("Loader", Loader);
 
 Vue.config.productionTip = false;
 
-socket.on("connect", () => {});
+socket.on("connect", () => {
+  console.log("[socket.io] Connected");
+});
 
 socket.on("disconnect", () => {
   store.commit("set_connected", false);
+  console.log("[socket.io] Disconnected");
 });
+
 socket.on("authenticated", () => {
   store.commit("set_connected", true);
+  console.log("[socket.io] Authenticated");
 });
 
 new Vue({
