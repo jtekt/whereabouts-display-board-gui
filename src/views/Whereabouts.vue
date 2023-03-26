@@ -8,13 +8,13 @@
             height="4em"
             width="4em"
             contain
-            :src="group.properties.avatar_src"
-            v-if="group.properties.avatar_src"
+            :src="group.avatar_src"
+            v-if="group.avatar_src"
           />
           <v-icon size="4em" v-else> mdi-account-group </v-icon>
         </v-col>
         <v-col cols="auto" class="text-h3">
-          {{ group.properties.name }}
+          {{ group.name }}
         </v-col>
         <v-spacer />
       </v-row>
@@ -40,6 +40,8 @@
 <script>
 import User from "@/components/User.vue";
 import DisconnectionWarning from "@/components/DisconnectionWarning.vue";
+
+const { VUE_APP_GROUP_MANAGER_API_URL } = process.env;
 
 export default {
   name: "Whereabouts",
@@ -92,7 +94,7 @@ export default {
   },
   methods: {
     get_group_info() {
-      const url = `${process.env.VUE_APP_GROUP_MANAGER_API_URL}/groups/${this.group_id}`;
+      const url = `${VUE_APP_GROUP_MANAGER_API_URL}/v3/groups/${this.group_id}`;
       this.axios
         .get(url)
         .then(({ data }) => {

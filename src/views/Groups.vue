@@ -33,17 +33,17 @@ export default {
   },
   methods: {
     select_group(group) {
-      const group_id = group._id || group.properties._id;
+      const group_id = group._id;
       localStorage.setItem("group_id", group_id);
       this.$router.push({ name: "whereabouts", params: { group_id } });
     },
   },
   computed: {
     official_groups() {
-      return this.groups.filter((group) => group.properties.official);
+      return this.groups.filter((group) => group.official);
     },
     non_official_groups() {
-      return this.groups.filter((group) => !group.properties.official);
+      return this.groups.filter((group) => !group.official);
     },
   },
 };
