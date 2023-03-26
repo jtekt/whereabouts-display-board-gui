@@ -29,12 +29,8 @@
 import AppTemplate from "@moreillon/vue_application_template_vuetify";
 import LocaleSelector from "./components/LocaleSelector.vue";
 
-const {
-  VUE_APP_LOGIN_URL,
-  VUE_APP_IDENTIFICATION_URL,
-  VUE_APP_AUTHENTICATION_API_URL,
-  VUE_APP_LOGIN_HINT,
-} = process.env;
+const { VUE_APP_LOGIN_URL, VUE_APP_IDENTIFICATION_URL, VUE_APP_LOGIN_HINT } =
+  process.env;
 
 export default {
   name: "App",
@@ -47,10 +43,8 @@ export default {
   data: () => ({
     options: {
       title: "行先掲示板",
-      login_url: VUE_APP_LOGIN_URL || `${VUE_APP_AUTHENTICATION_API_URL}/login`,
-      identification_url:
-        VUE_APP_IDENTIFICATION_URL ||
-        `${VUE_APP_AUTHENTICATION_API_URL}/v2/whoami`,
+      login_url: VUE_APP_LOGIN_URL,
+      identification_url: VUE_APP_IDENTIFICATION_URL,
       jwt_storage: "localStorage",
       header_logo: require("@/assets/jtekt_logo_negative.jpg"),
       authentication_logo: require("@/assets/jtekt_logo.jpg"),
