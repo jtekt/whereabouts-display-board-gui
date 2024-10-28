@@ -2,7 +2,7 @@
   "name": "whereabouts_front",
   "description": "Whereabouts GUI",
   "author": "Maxime Moreillon",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -16,7 +16,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@moreillon/vue_application_template_vuetify": "^1.2.2",
+    "@moreillon/vue_application_template_vuetify": "^1.2.11",
     "@moreillon/vue_group_picker": "^5.0.10",
     "@moreillon/vue_loader": "^1.0.5",
     "@paymoapp/electron-shutdown-handler": "^1.0.13",
