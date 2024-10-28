@@ -56,8 +56,6 @@ export default {
       author: "Maxime MOREILLON, JTEKT Corporation",
       login_hint: VUE_APP_LOGIN_HINT,
       homepage_url: VUE_APP_HOMEPAGE_URL,
-
-
     },
   }),
 
@@ -79,10 +77,6 @@ export default {
           to: { name: "groups" },
           icon: "mdi-account-multiple",
         },
-<<<<<<< HEAD
-        // { title: this.$t('Client configuration'), to: { name: 'client_config' }, icon: 'mdi-cogs' },
-=======
->>>>>>> ad525de3e8c7a8389f29940cafc3faae658d6a70
         {
           title: this.$t("About"),
           to: { name: "about" },
