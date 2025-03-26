@@ -270,7 +270,7 @@ export default {
   /* deal with names that are too long */
   /* does not work if using flex */
   white-space: nowrap;
-  overflow-x: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 
