@@ -265,11 +265,12 @@ export default {
 
 .user_name {
   width: 100%;
+  line-height: 100%;
 
   /* deal with names that are too long */
   /* does not work if using flex */
   white-space: nowrap;
-  overflow: hidden;
+  overflow-x: hidden;
   text-overflow: ellipsis;
 }
 
