@@ -41,6 +41,7 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import axios from "axios";
+
 import User from "@/components/User.vue";
 import DisconnectionWarning from "@/components/DisconnectionWarning.vue";
 import { useSocket } from "@/composables/useSocket";
@@ -60,14 +61,27 @@ interface UserData {
   whereabouts: Whereabouts;
 }
 
+interface WhereaboutsUpdate {
+  user_id: string;
+  availability: string;
+  message: string;
+  last_update: string;
+}
+
 const route = useRoute();
 const { getSocket } = useSocket();
 
 const GROUP_MANAGER_API_URL = import.meta.env.VITE_GROUP_MANAGER_API_URL;
 
+const socket = getSocket();
 const loading = ref(false);
 const group = ref<{ name: string; avatar_src?: string } | null>(null);
 const members = ref<UserData[]>([]);
+
+const pendingUpdates: Record<string, WhereaboutsUpdate> = {};
+const batchSize = 30;
+const startIndex = ref(0);
+const hasMore = ref(true);
 
 const groupId = computed(() => route.params.group_id as string);
 
@@ -79,6 +93,7 @@ const orderedMembers = computed(() =>
   ),
 );
 
+// Fetch static group info
 async function getGroupInfo() {
   try {
     const { data } = await axios.get(
@@ -90,28 +105,85 @@ async function getGroupInfo() {
   }
 }
 
-function getMembersOfGroup() {
+async function loadNextBatch() {
+  if (!hasMore.value) return;
+
   loading.value = true;
-  members.value = [];
-  getSocket().emit("get_members_of_group", { group_id: groupId.value });
-}
 
-function onAuthenticated() {
-  getMembersOfGroup();
-}
+  const url = `${GROUP_MANAGER_API_URL}/v3/groups/${groupId.value}/members`;
 
-function onMembersOfGroup(receivedMembers: UserData[]) {
-  loading.value = false;
-  receivedMembers.forEach((receivedMember) => {
-    const foundIndex = members.value.findIndex(
-      (m) => m._id === receivedMember._id,
-    );
-    if (foundIndex > -1) {
-      members.value[foundIndex] = receivedMember;
-    } else {
-      members.value.push(receivedMember);
-    }
+  const response = await axios.get(url, {
+    params: {
+      batch_size: batchSize,
+      start_index: startIndex.value,
+    },
   });
+
+  const items = response.data?.items ?? [];
+
+  if (!items.length) {
+    hasMore.value = false;
+    loading.value = false;
+    return;
+  }
+
+  const ids = items.map((u: any) => u._id);
+
+  // Whereabouts fetch
+  const wbResponse = await axios.get("/users/whereabouts", {
+    params: { ids: ids.join(",") },
+  });
+
+  const wbMap = wbResponse.data ?? {};
+
+  const batchMembers = items.map((member: any) => {
+    const id = String(member._id);
+
+    const defaultWB = {
+      user_id: id,
+      availability: "absent",
+      message: "unknown",
+      last_update: undefined,
+    };
+
+    // Merge pending update if exists
+    const appliedWb = pendingUpdates[id] ?? wbMap[id] ?? defaultWB;
+
+    return {
+      ...member,
+      whereabouts: appliedWb,
+    };
+  });
+
+  members.value.push(...batchMembers);
+
+  // Remove pending updates for these ids
+  ids.forEach((id: string) => delete pendingUpdates[id]);
+
+  startIndex.value += batchSize;
+  loading.value = false;
+}
+
+// Join WS groups & load first batch
+function onAuthenticated() {
+  socket.emit("join_groups", { group_ids: [groupId.value] });
+  loadNextBatch();
+}
+
+function onJoinedGroups(groups: string[]) {
+  console.log("Joined groups:", groups);
+}
+
+function onWhereaboutsUpdated(update: WhereaboutsUpdate) {
+  const idx = members.value.findIndex((m) => m._id === update.user_id);
+
+  if (idx !== -1) {
+    members.value[idx].whereabouts = update;
+    return;
+  }
+
+  // Not yet loaded. Stash for later
+  pendingUpdates[update.user_id] = update;
 }
 
 function onError(message: string) {
@@ -121,20 +193,21 @@ function onError(message: string) {
 
 onMounted(() => {
   getGroupInfo();
-  getMembersOfGroup();
-
-  const socket = getSocket();
   socket.on("authenticated", onAuthenticated);
-  socket.on("members_of_group", onMembersOfGroup);
-  socket.on("error", onError);
+  socket.on("joined_groups", onJoinedGroups);
+  socket.on("whereabouts_updated", onWhereaboutsUpdated);
   socket.on("error_message", onError);
+
+  if (socket.connected) {
+    onAuthenticated();
+  }
 });
 
 onUnmounted(() => {
   const socket = getSocket();
   socket.off("authenticated", onAuthenticated);
-  socket.off("members_of_group", onMembersOfGroup);
-  socket.off("error", onError);
+  socket.off("joined_groups", onJoinedGroups);
+  socket.off("whereabouts_updated", onWhereaboutsUpdated);
   socket.off("error_message", onError);
 });
 </script>

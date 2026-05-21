@@ -25,7 +25,8 @@ const route = useRoute();
 const { session } = useAuth();
 
 const GROUP_MANAGER_API_URL = import.meta.env.VITE_GROUP_MANAGER_API_URL;
-const EMPLOYEE_MANAGER_FRONT_URL = import.meta.env.VITE_EMPLOYEE_MANAGER_FRONT_URL;
+const EMPLOYEE_MANAGER_FRONT_URL = import.meta.env
+  .VITE_EMPLOYEE_MANAGER_FRONT_URL;
 
 interface Group {
   _id: string;
@@ -39,9 +40,10 @@ function selectGroup(group: Group) {
 }
 
 onMounted(() => {
-  if (route.path === "/" || route.path === "/groups") {
+  if (route.path === "/") {
     const groupId = localStorage.getItem("group_id");
-    if (groupId) router.push({ name: "whereabouts", params: { group_id: groupId } });
+    if (groupId)
+      router.push({ name: "whereabouts", params: { group_id: groupId } });
   }
 });
 </script>
