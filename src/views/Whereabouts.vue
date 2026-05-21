@@ -69,7 +69,7 @@ interface WhereaboutsUpdate {
 }
 
 const route = useRoute();
-const { getSocket } = useSocket();
+const { getSocket, isConnected } = useSocket();
 
 const GROUP_MANAGER_API_URL = import.meta.env.VITE_GROUP_MANAGER_API_URL;
 
@@ -198,7 +198,7 @@ onMounted(() => {
   socket.on("whereabouts_updated", onWhereaboutsUpdated);
   socket.on("error_message", onError);
 
-  if (socket.connected) {
+  if (isConnected.value) {
     onAuthenticated();
   }
 });
