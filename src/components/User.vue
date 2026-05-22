@@ -114,23 +114,15 @@ const userIsAvailable = computed(() =>
 );
 
 const userIsCurrentUser = computed(() => {
-  const authType = session.value?.authType;
-  const rawUser = session.value?.user;
-
-  const user = authType === "oidc" ? rawUser?.profile : rawUser;
-
-  const currentUserId = (user as Record<string, unknown>)?.id as
+  const user = session.value?.user.profile;
+  const currentUserId = (user as Record<string, unknown>)?._id as
     | string
     | undefined;
   return !!currentUserId && currentUserId === userId.value;
 });
 
 const userIsAdmin = computed(() => {
-  const authType = session.value?.authType;
-  const rawUser = session.value?.user;
-
-  const user = authType === "oidc" ? rawUser?.profile : rawUser;
-
+  const user = session.value?.user.profile;
   return !!(user as Record<string, unknown>)?.isAdmin;
 });
 
