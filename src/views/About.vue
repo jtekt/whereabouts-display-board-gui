@@ -1,87 +1,89 @@
 <template>
   <v-card max-width="60rem" class="mx-auto">
-    <v-card-title> 行先掲示板 </v-card-title>
+    <v-card-title>行先掲示板</v-card-title>
 
     <v-card-text>
       <p>A web-based display board to show the whereabouts of team members.</p>
       <p>
-        Developped and maintained by
+        Developed and maintained by
         <a href="https://maximemoreillon.com">Maxime MOREILLON</a>
       </p>
 
       <table>
-        <tr>
-          <th>Service</th>
-          <th>Version</th>
-          <th>URL</th>
-        </tr>
-        <tr v-for="(service, index) in services" :key="`service_${index}`">
-          <td>{{ service.name }}</td>
-          <td>{{ service.version }}</td>
-          <td>{{ service.url || "Undefined" }}</td>
-        </tr>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Version</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(service, index) in services" :key="`service_${index}`">
+            <td>{{ service.name }}</td>
+            <td>{{ service.version }}</td>
+            <td>{{ service.url || "Undefined" }}</td>
+          </tr>
+        </tbody>
       </table>
     </v-card-text>
   </v-card>
 </template>
 
-<script>
-import pjson from "@/../package.json";
-export default {
-  name: "About",
-  components: {},
-  data() {
-    return {
-      services: [
-        {
-          name: "Whereabouts GUI",
-          url: window.location.origin,
-          version: pjson.version,
-        },
-        {
-          name: "Whereabouts API",
-          url: process.env.VUE_APP_WHEREABOUTS_API_URL,
-          version: null,
-        },
+<script setup lang="ts">
+import { reactive, onMounted } from "vue";
+import axios from "axios";
+import pjson from "../../package.json";
 
-        {
-          name: "Group manager API",
-          url: process.env.VUE_APP_GROUP_MANAGER_API_URL,
-          version: null,
-        },
-        {
-          name: "Login URL",
-          url: process.env.VUE_APP_LOGIN_URL,
-          version: "N/A",
-        },
-        {
-          name: "Identification URL",
-          url: process.env.VUE_APP_IDENTIFICATION_URL,
-          version: "N/A",
-        },
-      ],
-    };
+interface Service {
+  name: string;
+  url: string | undefined;
+  version: string | null;
+}
+
+const services = reactive<Service[]>([
+  {
+    name: "Whereabouts GUI",
+    url: window.location.origin,
+    version: pjson.version,
   },
-  mounted() {
-    this.get_services_version();
+  {
+    name: "Whereabouts API",
+    url: import.meta.env.VITE_WHEREABOUTS_API_URL,
+    version: null,
   },
-  methods: {
-    get_services_version() {
-      this.services.forEach((service) => {
-        if (service.version) return;
-        service.version = "Connecting...";
-        this.axios
-          .get(service.url)
-          .then(({ data }) => {
-            service.version = data.version;
-          })
-          .catch(() => {
-            service.version = "Unable to connect";
-          });
-      });
-    },
+  {
+    name: "Group manager API",
+    url: import.meta.env.VITE_GROUP_MANAGER_API_URL,
+    version: null,
   },
-};
+  {
+    name: "Login URL",
+    url: import.meta.env.VITE_LOGIN_URL,
+    version: "N/A",
+  },
+  {
+    name: "Identification URL",
+    url: import.meta.env.VITE_IDENTIFICATION_URL,
+    version: "N/A",
+  },
+]);
+
+async function getServicesVersion() {
+  for (const service of services) {
+    if (service.version) continue;
+    service.version = "Connecting...";
+    try {
+      const { data } = await axios.get(service.url!);
+      service.version = data.version ?? "Unknown";
+    } catch {
+      service.version = "Unable to connect";
+    }
+  }
+}
+
+onMounted(() => {
+  getServicesVersion();
+});
 </script>
 
 <style scoped>

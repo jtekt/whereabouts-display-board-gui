@@ -1,56 +1,55 @@
 <template>
   <v-card max-width="40rem" class="mx-auto">
-    <v-card-title> Groups </v-card-title>
+    <v-card-title>{{ $t("Groups") }}</v-card-title>
 
     <v-card-text>
-      <GroupPicker class="group_picker" @selection="select_group($event)" />
+      <GroupPicker
+        class="group-picker"
+        :groupManagerApiUrl="GROUP_MANAGER_API_URL"
+        :group-manager-front-url="EMPLOYEE_MANAGER_FRONT_URL"
+        :accessToken="session?.accessToken"
+        @selection="selectGroup"
+      />
     </v-card-text>
   </v-card>
 </template>
 
-<script>
-import AccountMultipleIcon from "vue-material-design-icons/AccountMultiple.vue";
-import InformationOutlineIcon from "vue-material-design-icons/InformationOutline.vue";
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { GroupPicker } from "@moreillon/group-manager-vue-picker";
+import { useAuth } from "@jtekt/vuetify-auth";
 
-import GroupPicker from "@moreillon/vue_group_picker";
+const router = useRouter();
+const route = useRoute();
+const { session } = useAuth();
 
-export default {
-  name: "Groups",
-  components: {
-    AccountMultipleIcon,
-    InformationOutlineIcon,
-    GroupPicker,
-  },
-  data() {
-    return {};
-  },
-  mounted() {
-    if (this.$route.path == "/") {
-      const group_id = localStorage.getItem("group_id");
-      if (group_id)
-        this.$router.push({ name: "whereabouts", params: { group_id } });
-    }
-  },
-  methods: {
-    select_group(group) {
-      const group_id = group._id;
-      localStorage.setItem("group_id", group_id);
-      this.$router.push({ name: "whereabouts", params: { group_id } });
-    },
-  },
-  computed: {
-    official_groups() {
-      return this.groups.filter((group) => group.official);
-    },
-    non_official_groups() {
-      return this.groups.filter((group) => !group.official);
-    },
-  },
-};
+const GROUP_MANAGER_API_URL = import.meta.env.VITE_GROUP_MANAGER_API_URL;
+const EMPLOYEE_MANAGER_FRONT_URL = import.meta.env
+  .VITE_EMPLOYEE_MANAGER_FRONT_URL;
+
+interface Group {
+  _id: string;
+  [key: string]: unknown;
+}
+
+function selectGroup(group: Group) {
+  const groupId = group._id;
+  localStorage.setItem("group_id", groupId);
+  router.push({ name: "whereabouts", params: { group_id: groupId } });
+}
+
+onMounted(() => {
+  if (route.path === "/") {
+    const groupId = localStorage.getItem("group_id");
+    if (groupId)
+      router.push({ name: "whereabouts", params: { group_id: groupId } });
+  }
+});
 </script>
 
 <style scoped>
-.group_picker {
+.group-picker {
   max-height: 70vh;
   text-align: left;
 }

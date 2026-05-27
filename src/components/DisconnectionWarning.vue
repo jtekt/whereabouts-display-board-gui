@@ -1,83 +1,41 @@
 <template>
-  <div class="disconnection_warning" v-bind:class="{ open: warning_visible }">
-    <Loader>Connecting...</Loader>
-  </div>
+  <v-overlay
+    :model-value="warningVisible"
+    class="align-center justify-center"
+    persistent
+    :z-index="100"
+    style="background-color: rgba(68, 68, 68, 0.8)"
+  >
+    <div class="disconnection-content">
+      <v-progress-circular indeterminate color="white" size="48" class="mr-4" />
+      <span class="text-white text-h6">Connecting...</span>
+    </div>
+  </v-overlay>
 </template>
 
-<script>
-export default {
-  name: "DisconnectionWarning",
-  props: {
-    visible: Boolean,
-  },
-  data() {
-    return {
-      enabled: false,
-    };
-  },
-  mounted() {
-    setTimeout(() => {
-      this.enabled = true;
-    }, 1000);
-  },
+<script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useSocket } from "@/composables/useSocket";
+const socketStore = useSocket();
 
-  computed: {
-    warning_visible() {
-      return this.enabled && this.visible;
-    },
-  },
-};
+// Delay showing the warning by 1 s to avoid flashing on fast connections
+const enabled = ref(false);
+
+onMounted(() => {
+  setTimeout(() => {
+    enabled.value = true;
+  }, 1000);
+});
+
+const warningVisible = computed(
+  () => enabled.value && !socketStore.isConnected.value,
+);
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.disconnection_warning {
-  /* poisitioning and sizing of background*/
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 100;
-
-  /* positioning of content */
+.disconnection-content {
   display: flex;
-  justify-content: center;
   align-items: center;
-
-  background-color: #444444; /* fallback for ie */
-  background-color: #444444cc;
-
-  color: white;
   font-size: 6vmin;
-
-  /* values which change when opening the modal */
-  /* here are the defaults */
-  visibility: hidden;
-  opacity: 0;
-
-  transition: visibility 0.5s, opacity 0.5s;
-}
-
-.disconnection_warning.open {
-  visibility: visible;
-  opacity: 1;
-
-  /* Delay when OPENING */
-  transition-delay: 0s;
-}
-
-.disconnection_warning {
-  /* delay when CLOSING */
-  transition-delay: 0.25s;
-}
-
-@keyframes blinking {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
 }
 </style>
