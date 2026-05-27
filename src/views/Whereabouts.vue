@@ -5,13 +5,13 @@
         <v-spacer />
         <v-col cols="auto">
           <v-img
+            v-if="group.avatar_src"
             height="4em"
             width="4em"
             contain
             :src="group.avatar_src"
-            v-if="group.avatar_src"
           />
-          <v-icon size="4em" v-else> mdi-account-group </v-icon>
+          <v-icon v-else size="4em">mdi-account-group</v-icon>
         </v-col>
         <v-col cols="auto" class="text-h3">
           {{ group.name }}
@@ -22,7 +22,7 @@
 
     <v-card-text v-if="!loading && members.length" class="employees_table">
       <User
-        v-for="(user, index) in ordered_members"
+        v-for="(user, index) in orderedMembers"
         :user="user"
         :key="`user_${index}`"
       />
@@ -32,109 +32,116 @@
       No member
     </v-card-text>
 
-    <!-- overlay to show connection problems -->
-    <DisconnectionWarning :visible="!$store.state.connected" />
+    <!-- DisconnectionWarning reads isConnected internally from useSocket() -->
+    <DisconnectionWarning />
   </v-card>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useRoute } from "vue-router";
+import axios from "axios";
 import User from "@/components/User.vue";
 import DisconnectionWarning from "@/components/DisconnectionWarning.vue";
+import { useSocket } from "@/composables/useSocket";
 
-const { VUE_APP_GROUP_MANAGER_API_URL } = process.env;
+interface Whereabouts {
+  availability: string;
+  message: string;
+  last_update?: string;
+}
 
-export default {
-  name: "Whereabouts",
-  components: {
-    User,
-    DisconnectionWarning,
-  },
-  data() {
-    return {
-      loading: false, // used to distinguish between having no result or still loading
+interface UserData {
+  _id: string;
+  name_kanji?: string;
+  display_name?: string;
+  username?: string;
+  employee_number?: number;
+  whereabouts: Whereabouts;
+}
 
-      group: null,
+const route = useRoute();
+const { getSocket } = useSocket();
 
-      members: [],
-    };
-  },
+const GROUP_MANAGER_API_URL = import.meta.env.VITE_GROUP_MANAGER_API_URL;
 
-  mounted() {
-    this.get_group_info();
-    this.get_members_of_group();
-  },
-  sockets: {
-    authenticated() {
-      this.get_members_of_group();
-    },
-    error(message) {
-      console.error(message);
-      alert(message);
-    },
-    error_message(message) {
-      console.error(message);
-      alert(message);
-    },
-    members_of_group(received_members) {
-      this.loading = false; // does not seem to do anything
+const loading = ref(false);
+const group = ref<{ name: string; avatar_src?: string } | null>(null);
+const members = ref<UserData[]>([]);
 
-      received_members.forEach((received_member) => {
-        const found_index = this.members.findIndex(
-          ({ _id }) => _id === received_member._id
-        );
+const groupId = computed(() => route.params.group_id as string);
 
-        // If user exists, update
-        if (found_index > -1)
-          this.$set(this.members, found_index, received_member);
-        // else add user
-        else this.members.push(received_member);
-      });
-    },
-  },
-  methods: {
-    get_group_info() {
-      const url = `${VUE_APP_GROUP_MANAGER_API_URL}/v3/groups/${this.group_id}`;
-      this.axios
-        .get(url)
-        .then(({ data }) => {
-          this.group = data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-    get_members_of_group() {
-      // Set loader
-      this.loading = true;
+const orderedMembers = computed(() =>
+  [...members.value].sort(
+    (a, b) =>
+      ((a.employee_number as number) ?? 0) -
+      ((b.employee_number as number) ?? 0),
+  ),
+);
 
-      // Delete members
-      this.members = [];
+async function getGroupInfo() {
+  try {
+    const { data } = await axios.get(
+      `${GROUP_MANAGER_API_URL}/v3/groups/${groupId.value}`,
+    );
+    group.value = data;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-      this.$socket.client.emit("get_members_of_group", {
-        group_id: this.group_id,
-      });
-    },
-  },
-  computed: {
-    group_id() {
-      return this.$route.params.group_id;
-    },
-    ordered_members() {
-      return this.members.sort((a, b) => a.employee_number - b.employee_number);
-    },
-  },
-};
+function getMembersOfGroup() {
+  loading.value = true;
+  members.value = [];
+  getSocket().emit("get_members_of_group", { group_id: groupId.value });
+}
+
+function onAuthenticated() {
+  getMembersOfGroup();
+}
+
+function onMembersOfGroup(receivedMembers: UserData[]) {
+  loading.value = false;
+  receivedMembers.forEach((receivedMember) => {
+    const foundIndex = members.value.findIndex(
+      (m) => m._id === receivedMember._id,
+    );
+    if (foundIndex > -1) {
+      members.value[foundIndex] = receivedMember;
+    } else {
+      members.value.push(receivedMember);
+    }
+  });
+}
+
+function onError(message: string) {
+  console.error(message);
+  alert(message);
+}
+
+onMounted(() => {
+  getGroupInfo();
+  getMembersOfGroup();
+
+  const socket = getSocket();
+  socket.on("authenticated", onAuthenticated);
+  socket.on("members_of_group", onMembersOfGroup);
+  socket.on("error", onError);
+  socket.on("error_message", onError);
+});
+
+onUnmounted(() => {
+  const socket = getSocket();
+  socket.off("authenticated", onAuthenticated);
+  socket.off("members_of_group", onMembersOfGroup);
+  socket.off("error", onError);
+  socket.off("error_message", onError);
+});
 </script>
 
 <style scoped>
 .employees_table {
   margin: 0.5em;
-
-  /* IE fallback behavior */
-  display: flex;
-  flex-wrap: wrap;
-
-  /* Normal behavior */
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(70vmin, 1fr));
   grid-column-gap: 1em;
@@ -146,35 +153,5 @@ export default {
   text-align: center;
   margin: 1em;
   font-size: 120%;
-}
-
-.group_name_wrapper {
-  margin: 1em;
-  display: block;
-  text-align: center;
-  text-decoration: none;
-  color: CurrentColor;
-  transition: color 0.25s;
-}
-
-.group_name_wrapper:hover {
-  color: #c00000;
-}
-
-.group_name_wrapper h1 {
-  font-size: 5vmin;
-  margin: 0;
-}
-
-.group_avatar {
-  width: 12vmin;
-  height: 12vmin;
-  object-fit: contain;
-}
-
-.loader_container {
-  margin-top: 10vmin;
-  font-size: 10vmin;
-  text-align: center;
 }
 </style>

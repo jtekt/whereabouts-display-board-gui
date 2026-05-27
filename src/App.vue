@@ -1,95 +1,81 @@
 <template>
-  <AppTemplate :options="options" @user="get_user($event)">
-    <template v-slot:nav>
-      <v-list dense nav>
-        <v-list-item>
-          <LocaleSelector />
-        </v-list-item>
-        <v-divider />
-        <v-list-item
-          v-for="(item, index) in nav"
-          :key="`nav_item_${index}`"
-          :to="item.to"
-          exact
-        >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
+  <v-app>
+    <!-- App Bar -->
+    <v-app-bar color="#000">
+      <v-app-bar-nav-icon v-if="session" @click="drawer = !drawer" />
+      <v-img src="/logo.png" height="30" max-width="30" contain class="ml-2" />
+      <v-app-bar-title> 行先掲示板 </v-app-bar-title>
+      <template #append>
+        <LocaleSelector />
+        <ThemeToggler />
 
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <v-btn v-if="session" icon="mdi-logout" @click="logout" />
+      </template>
+    </v-app-bar>
+
+    <!-- Navigation Drawer -->
+    <v-navigation-drawer v-if="session" v-model="drawer">
+      <v-list density="compact" nav>
+        <v-list-item
+          v-for="item in nav"
+          :key="item.to.name"
+          :to="item.to"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          exact
+        />
       </v-list>
-    </template>
-  </AppTemplate>
+    </v-navigation-drawer>
+
+    <!-- Main Content -->
+    <v-main>
+      <v-container>
+        <router-view />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
-<script>
-import AppTemplate from "@moreillon/vue_application_template_vuetify";
-import LocaleSelector from "./components/LocaleSelector.vue";
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useAuth } from "@jtekt/vuetify-auth";
+import { useSocket } from "@/composables/useSocket";
+import LocaleSelector from "@/components/LocaleSelector.vue";
+import ThemeToggler from "@/components/ThemeToggler.vue";
+import { useAxiosAuth } from "@/composables/useAxiosAuth";
 
-const {
-  VUE_APP_LOGIN_URL,
-  VUE_APP_IDENTIFICATION_URL,
-  VUE_APP_HOMEPAGE_URL,
-  VUE_APP_LOGIN_HINT,
-} = process.env;
+useAxiosAuth();
+const { t } = useI18n();
+const { session, logout } = useAuth();
+const { authenticate, connect } = useSocket();
 
-export default {
-  name: "App",
+const drawer = ref(false);
 
-  components: {
-    AppTemplate,
-    LocaleSelector,
+const nav = computed(() => [
+  {
+    title: t("Groups"),
+    to: { name: "groups" },
+    icon: "mdi-account-multiple",
   },
-
-  data: () => ({
-    options: {
-      title: "行先掲示板",
-      login_url: VUE_APP_LOGIN_URL,
-      identification_url: VUE_APP_IDENTIFICATION_URL,
-      jwt_storage: "localStorage",
-      header_logo: require("@/assets/jtekt_logo_negative.jpg"),
-      authentication_logo: require("@/assets/jtekt_logo.jpg"),
-      colors: { app_bar: "#000" },
-      author: "Maxime MOREILLON, JTEKT Corporation",
-      login_hint: VUE_APP_LOGIN_HINT,
-      homepage_url: VUE_APP_HOMEPAGE_URL,
-    },
-  }),
-
-  methods: {
-    get_user(user) {
-      this.$store.commit("set_current_user", user);
-
-      if (!user) return;
-      const jwt = this.$cookies.get("jwt") || localStorage.getItem("jwt");
-      if (!jwt) return;
-      this.$socket.client.emit("authentication", { jwt });
-    },
+  {
+    title: t("About"),
+    to: { name: "about" },
+    icon: "mdi-information-outline",
   },
-  computed: {
-    nav() {
-      return [
-        {
-          title: this.$t("Groups"),
-          to: { name: "groups" },
-          icon: "mdi-account-multiple",
-        },
-        {
-          title: this.$t("About"),
-          to: { name: "about" },
-          icon: "mdi-information-outline",
-        },
-      ];
-    },
+]);
+
+onMounted(() => {
+  connect(import.meta.env.VITE_WHEREABOUTS_API_URL);
+});
+
+// Authenticate socket whenever a session becomes available
+watch(
+  () => session.value?.accessToken,
+  (token) => {
+    if (token) {
+      authenticate(token);
+    }
   },
-};
+);
 </script>
-
-<style>
-.header_logo {
-  border-right: 1px solid white;
-}
-</style>
