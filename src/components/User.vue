@@ -5,9 +5,9 @@
       class="name_cell"
       @click="toggleAvailability"
       :class="{
-        party: user.whereabouts.availability === 'party',
+        party: user.whereabouts.message === 'party',
         available: userIsAvailable,
-        loading: user.whereabouts.availability === 'loading',
+        loading: user.whereabouts.message === 'loading',
         editable: userCanEdit,
       }"
     >
