@@ -7,7 +7,7 @@
       :class="{
         party: user.whereabouts.message === 'party',
         available: userIsAvailable,
-        loading: user.whereabouts.message === 'loading',
+        loading: user.whereabouts.availability === 'loading',
         editable: userCanEdit,
       }"
     >
