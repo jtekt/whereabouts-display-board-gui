@@ -21,7 +21,7 @@ spec:
             - secretRef:
                 name: environment-variables
           env:
-            - name: VITE_APP_WHEREABOUTS_API_URL
+            - name: VITE_WHEREABOUTS_API_URL
               value: http://10.115.1.100:30777
             - name: VITE_GROUP_MANAGER_API_URL
               value: https://groups-api.jtektrnd.net

@@ -3,13 +3,7 @@
     <!-- App Bar -->
     <v-app-bar color="#000">
       <v-app-bar-nav-icon v-if="session" @click="drawer = !drawer" />
-      <v-img
-        src="/jtekt_logo_negative.jpg"
-        height="36"
-        max-width="120"
-        contain
-        class="ml-2"
-      />
+      <v-img src="/logo.png" height="30" max-width="30" contain class="ml-2" />
       <v-app-bar-title> 行先掲示板 </v-app-bar-title>
       <template #append>
         <LocaleSelector />
