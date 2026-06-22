@@ -15,14 +15,12 @@ spec:
       containers:
         - name: ${APPLICATION_NAME}
           image: ${CONTAINER_IMAGE_TAGGED}
-          ports:
-            - containerPort: 80
           envFrom:
             - secretRef:
                 name: environment-variables
           env:
             - name: VITE_WHEREABOUTS_API_URL
-              value: http://10.115.1.100:30777
+              value: https://whereabouts-api.jtektrnd.net
             - name: VITE_GROUP_MANAGER_API_URL
               value: https://groups-api.jtektrnd.net
             - name: VITE_LOGIN_URL
@@ -42,3 +40,27 @@ spec:
   ports:
     - port: 80
       nodePort: ${K8S_SERVICE_PORT}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ${APPLICATION_NAME}
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: 行先掲示板
+    gethomepage.dev/icon: https://gitlab.jtektrnd.net/uploads/-/system/project/avatar/231/whereabouts_v4.png
+    gethomepage.dev/group: 業務アプリ
+    gethomepage.dev/pod-selector: app=${APPLICATION_NAME}
+
+spec:
+  rules:
+    - host: whereabouts.jtektrnd.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ${APPLICATION_NAME}
+                port:
+                  number: 80
