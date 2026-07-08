@@ -33,42 +33,25 @@
     />
 
     <!-- location cell — edit mode -->
-    <form v-else class="location_edit_form" @submit.prevent="updateLocation">
-      <input
-        ref="locationInputRef"
-        type="text"
-        v-model="userCopy!.whereabouts.message"
-        placeholder="行先"
-      />
-      <div
-        class="premade_options_wrapper"
-        :class="{ 'show-above': showDropdownAbove }"
-        ref="dropdownRef"
-      >
-        <div
-          class="premade_option"
-          v-for="option in premadeOptions"
-          :key="option"
-          @click="premadeOptionSelect(option)"
-        >
-          {{ option }}
-        </div>
+    <form v-else @submit.prevent="updateLocation" class="location_edit_form">
+      <div class="d-flex align-center ga-2 w-100">
+        <v-combobox
+          v-model="userCopy!.whereabouts.message"
+          :items="premadeOptions"
+          variant="outlined"
+          hide-details
+        />
+
+        <v-btn type="submit" icon="mdi-check" color="success" />
+
+        <v-btn
+          type="button"
+          @click="locationEditMode = false"
+          icon="mdi-close"
+          color="error"
+        />
       </div>
-
-      <v-btn
-        icon
-        @click="updateLocation"
-        type="submit"
-        color="success"
-        size="small"
-      >
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
-      <v-btn icon @click="locationEditMode = false" color="error" size="small">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
     </form>
-
     <div
       v-if="user.whereabouts.last_update && !locationEditMode"
       class="last_update_time"
@@ -343,38 +326,6 @@ function premadeOptionSelect(option: string) {
   bottom: 0.25em;
   right: 0.5em;
   font-size: 50%;
-}
-
-.premade_options_wrapper {
-  background-color: white;
-  position: absolute;
-  top: calc(100% + 0.5em);
-  left: 0%;
-  width: calc(100% - 4.5em);
-  z-index: 1;
-  border-radius: 0.25em;
-  border: 1px solid #aaaaaa;
-  box-shadow:
-    0 3px 6px rgba(0, 0, 0, 0.16),
-    0 3px 6px rgba(0, 0, 0, 0.23);
-}
-
-.premade_options_wrapper.show-above {
-  top: auto;
-  bottom: calc(100% + 0.5em);
-}
-
-.premade_option {
-  padding: 0.5em;
-  cursor: pointer;
-}
-
-.premade_option:not(:last-child) {
-  border-bottom: 1px solid #dddddd;
-}
-
-.premade_option:hover {
-  background-color: #eeeeee;
 }
 
 .name_cell.party {
