@@ -40,8 +40,11 @@
         v-model="userCopy!.whereabouts.message"
         placeholder="行先"
       />
-
-      <div class="premade_options_wrapper">
+      <div
+        class="premade_options_wrapper"
+        :class="{ 'show-above': showDropdownAbove }"
+        ref="dropdownRef"
+      >
         <div
           class="premade_option"
           v-for="option in premadeOptions"
@@ -76,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick } from "vue";
+import { ref, computed, nextTick, watch } from "vue";
 import axios from "axios";
 import { useAuth } from "@jtekt/vuetify-auth";
 
@@ -129,6 +132,30 @@ const userIsAdmin = computed(() => {
 const userCanEdit = computed(
   () => userIsCurrentUser.value || userIsAdmin.value,
 );
+const dropdownRef = ref<HTMLElement | null>(null);
+const showDropdownAbove = ref(false);
+
+const checkDropdownPosition = () => {
+  if (!locationInputRef.value || !dropdownRef.value) return;
+
+  const rect = locationInputRef.value.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  const spaceBelow = viewportHeight - rect.bottom;
+  const dropdownHeight = dropdownRef.value.scrollHeight;
+
+  // If there's not enough space below, show above
+  showDropdownAbove.value = spaceBelow < dropdownHeight;
+};
+
+watch(locationEditMode, async (newVal) => {
+  if (newVal) {
+    await nextTick();
+    checkDropdownPosition();
+    window.addEventListener("resize", checkDropdownPosition);
+  } else {
+    window.removeEventListener("resize", checkDropdownPosition);
+  }
+});
 
 function enableLocationEdition() {
   if (!userCanEdit.value) return;
@@ -330,6 +357,11 @@ function premadeOptionSelect(option: string) {
   box-shadow:
     0 3px 6px rgba(0, 0, 0, 0.16),
     0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.premade_options_wrapper.show-above {
+  top: auto;
+  bottom: calc(100% + 0.5em);
 }
 
 .premade_option {
