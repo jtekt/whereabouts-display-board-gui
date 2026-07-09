@@ -37,8 +37,11 @@
       <div class="d-flex align-center ga-2 w-100">
         <v-combobox
           v-model="userCopy!.whereabouts.message"
+          v-model:menu="comboboxMenuOpen"
           :items="premadeOptions"
           variant="outlined"
+          autofocus
+          @keydown.enter.prevent="updateLocation"
           hide-details
         />
 
@@ -87,6 +90,7 @@ const props = defineProps<{
 
 const { session } = useAuth();
 
+const comboboxMenuOpen = ref(false);
 const locationEditMode = ref(false);
 const userCopy = ref<UserData | null>(null);
 const locationInputRef = ref<HTMLInputElement | null>(null);
@@ -115,34 +119,11 @@ const userIsAdmin = computed(() => {
 const userCanEdit = computed(
   () => userIsCurrentUser.value || userIsAdmin.value,
 );
-const dropdownRef = ref<HTMLElement | null>(null);
-const showDropdownAbove = ref(false);
-
-const checkDropdownPosition = () => {
-  if (!locationInputRef.value || !dropdownRef.value) return;
-
-  const rect = locationInputRef.value.getBoundingClientRect();
-  const viewportHeight = window.innerHeight;
-  const spaceBelow = viewportHeight - rect.bottom;
-  const dropdownHeight = dropdownRef.value.scrollHeight;
-
-  // If there's not enough space below, show above
-  showDropdownAbove.value = spaceBelow < dropdownHeight;
-};
-
-watch(locationEditMode, async (newVal) => {
-  if (newVal) {
-    await nextTick();
-    checkDropdownPosition();
-    window.addEventListener("resize", checkDropdownPosition);
-  } else {
-    window.removeEventListener("resize", checkDropdownPosition);
-  }
-});
 
 function enableLocationEdition() {
   if (!userCanEdit.value) return;
   locationEditMode.value = true;
+  comboboxMenuOpen.value = true;
   userCopy.value = JSON.parse(JSON.stringify(props.user));
   nextTick(() => locationInputRef.value?.select());
 }
