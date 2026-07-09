@@ -12,7 +12,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@jtekt/vuetify-auth": "^0.1.2",
+    "@jtekt/vuetify-auth": "^0.1.9",
     "@mdi/font": "^7.4.47",
     "@moreillon/group-manager-vue-picker": "latest",
     "axios": "^1.16.1",
