@@ -1,24 +1,22 @@
 <template>
   <v-card :loading="loading">
-    <v-container v-if="group">
-      <v-row align="center">
-        <v-spacer />
+    <v-card-title>
+      <v-row align="center" v-if="group" justify="center">
         <v-col cols="auto">
           <v-img
             v-if="group.avatar_src"
-            height="4em"
-            width="4em"
+            height="2.5em"
+            width="2.5em"
             contain
             :src="group.avatar_src"
           />
-          <v-icon v-else size="4em">mdi-account-group</v-icon>
+          <v-icon v-else size="2.5em">mdi-account-group</v-icon>
         </v-col>
-        <v-col cols="auto" class="text-h3">
+        <v-col cols="auto">
           {{ group.name }}
         </v-col>
-        <v-spacer />
       </v-row>
-    </v-container>
+    </v-card-title>
 
     <v-card-text v-if="!loading && members.length" class="employees_table">
       <User
