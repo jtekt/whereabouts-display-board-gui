@@ -13,12 +13,14 @@ const auth = createAuthPlugin(
     oidc: {
       clientId: import.meta.env.VITE_OIDC_CLIENT_ID,
       authority: import.meta.env.VITE_OIDC_AUTHORITY,
+      enrichmentEndpoint: import.meta.env.VITE_AUTH_IDENTIFICATION_URL,
+      identifierLookupField: import.meta.env.VITE_AUTH_ENRICMENT_ID_FIELD,
     },
     credentials: {
       loginEndpoint: import.meta.env.VITE_LOGIN_URL,
       resetPasswordEndpoint: import.meta.env.VITE_PASSWORD_RESET_URL,
+      identifierLookupField: import.meta.env.VITE_AUTH_ENRICMENT_ID_FIELD,
     },
-    enrichmentEndpoint: import.meta.env.VITE_ENRICHEMENT_URL,
   },
   router,
 );
