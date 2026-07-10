@@ -63,7 +63,7 @@ const services = reactive<Service[]>([
   },
   {
     name: "Identification URL",
-    url: import.meta.env.VITE_IDENTIFICATION_URL,
+    url: import.meta.env.VITE_AUTH_IDENTIFICATION_URL,
     version: "N/A",
   },
 ]);

@@ -104,10 +104,7 @@ const userIsAvailable = computed(() =>
 );
 
 const userIsCurrentUser = computed(() => {
-  const user = session.value?.user.profile;
-  const currentUserId = (user as Record<string, unknown>)?._id as
-    | string
-    | undefined;
+  const currentUserId = session.value?.user.id;
   return !!currentUserId && currentUserId === userId.value;
 });
 

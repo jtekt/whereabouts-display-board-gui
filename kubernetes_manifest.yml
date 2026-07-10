@@ -25,8 +25,10 @@ spec:
               value: https://groups-api.jtektrnd.net
             - name: VITE_LOGIN_URL
               value: https://employees-api.jtektrnd.net/v3/auth/login
-            - name: VITE_IDENTIFICATION_URL
+            - name: VITE_AUTH_IDENTIFICATION_URL
               value: https://employees-api.jtektrnd.net/v3/users/self
+            - name: VITE_AUTH_ENRICMENT_ID_FIELD
+              value: _id
 
 ---
 apiVersion: v1
