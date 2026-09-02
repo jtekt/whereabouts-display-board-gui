@@ -9,6 +9,7 @@
         <LocaleSelector />
         <ThemeToggler />
 
+        <v-btn v-if="APPS_URL" :href="APPS_URL" icon="mdi-apps" />
         <v-btn v-if="session" icon="mdi-logout" @click="logout" />
       </template>
     </v-app-bar>
@@ -51,6 +52,7 @@ const { session, logout } = useAuth();
 const { authenticate, connect } = useSocket();
 
 const drawer = ref(false);
+const APPS_URL = import.meta.env.VITE_APPS_URL;
 
 const nav = computed(() => [
   {
