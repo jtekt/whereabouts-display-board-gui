@@ -19,6 +19,8 @@ spec:
             - secretRef:
                 name: environment-variables
           env:
+            - name: VITE_APPS_URL
+              value: https://apps.jtektrnd.net/
             - name: VITE_WHEREABOUTS_API_URL
               value: https://whereabouts-api.jtektrnd.net
             - name: VITE_GROUP_MANAGER_API_URL

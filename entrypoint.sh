@@ -9,6 +9,7 @@ do
   echo "Processing $file ...";
 
 
+  sed -i 's|VITE_APPS_URL_PLACEHOLDER|'${VITE_APPS_URL}'|g' $file
   sed -i 's|VITE_WHEREABOUTS_API_URL_PLACEHOLDER|'${VITE_WHEREABOUTS_API_URL}'|g' $file
   sed -i 's|VITE_AUTH_IDENTIFICATION_URL_PLACEHOLDER|'${VITE_AUTH_IDENTIFICATION_URL}'|g' $file
   sed -i 's|VITE_LOGIN_URL_PLACEHOLDER|'${VITE_LOGIN_URL}'|g' $file
