@@ -32,7 +32,6 @@
 <script setup lang="ts">
 import { reactive, onMounted } from "vue";
 import axios from "axios";
-import pjson from "../../package.json";
 
 interface Service {
   name: string;
@@ -44,7 +43,7 @@ const services = reactive<Service[]>([
   {
     name: "Whereabouts GUI",
     url: window.location.origin,
-    version: pjson.version,
+    version: import.meta.env.VITE_APP_VERSION,
   },
   {
     name: "Whereabouts API",
