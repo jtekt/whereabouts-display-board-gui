@@ -42,6 +42,7 @@ import axios from "axios";
 import User from "@/components/User.vue";
 import DisconnectionWarning from "@/components/DisconnectionWarning.vue";
 import { useSocket } from "@/composables/useSocket";
+import runtimeEnv from "@/runtimeEnv";
 
 interface Whereabouts {
   availability: string;
@@ -61,7 +62,7 @@ interface UserData {
 const route = useRoute();
 const { getSocket } = useSocket();
 
-const GROUP_MANAGER_API_URL = import.meta.env.VITE_GROUP_MANAGER_API_URL;
+const GROUP_MANAGER_API_URL = runtimeEnv.VITE_GROUP_MANAGER_API_URL;
 
 const loading = ref(false);
 const group = ref<{ name: string; avatar_src?: string } | null>(null);

@@ -5,21 +5,22 @@ import vuetify from "./plugins/vuetify";
 import i18n from "./i18n";
 import axios from "axios";
 import { createAuthPlugin } from "@jtekt/vuetify-auth";
+import runtimeEnv from "@/runtimeEnv";
 
-axios.defaults.baseURL = import.meta.env.VITE_WHEREABOUTS_API_URL;
+axios.defaults.baseURL = runtimeEnv.VITE_WHEREABOUTS_API_URL;
 
 const auth = createAuthPlugin(
   {
     oidc: {
-      clientId: import.meta.env.VITE_OIDC_CLIENT_ID,
-      authority: import.meta.env.VITE_OIDC_AUTHORITY,
-      enrichmentEndpoint: import.meta.env.VITE_AUTH_IDENTIFICATION_URL,
-      identifierLookupField: import.meta.env.VITE_AUTH_ENRICMENT_ID_FIELD,
+      clientId: runtimeEnv.VITE_OIDC_CLIENT_ID,
+      authority: runtimeEnv.VITE_OIDC_AUTHORITY,
+      enrichmentEndpoint: runtimeEnv.VITE_AUTH_IDENTIFICATION_URL,
+      identifierLookupField: runtimeEnv.VITE_AUTH_ENRICMENT_ID_FIELD,
     },
     credentials: {
-      loginEndpoint: import.meta.env.VITE_LOGIN_URL,
-      resetPasswordEndpoint: import.meta.env.VITE_PASSWORD_RESET_URL,
-      identifierLookupField: import.meta.env.VITE_AUTH_ENRICMENT_ID_FIELD,
+      loginEndpoint: runtimeEnv.VITE_LOGIN_URL,
+      resetPasswordEndpoint: runtimeEnv.VITE_PASSWORD_RESET_URL,
+      identifierLookupField: runtimeEnv.VITE_AUTH_ENRICMENT_ID_FIELD,
     },
   },
   router,

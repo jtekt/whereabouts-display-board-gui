@@ -45,6 +45,7 @@ import { useSocket } from "@/composables/useSocket";
 import LocaleSelector from "@/components/LocaleSelector.vue";
 import ThemeToggler from "@/components/ThemeToggler.vue";
 import { useAxiosAuth } from "@/composables/useAxiosAuth";
+import runtimeEnv from "@/runtimeEnv";
 
 useAxiosAuth();
 const { t } = useI18n();
@@ -52,7 +53,7 @@ const { session, logout } = useAuth();
 const { authenticate, connect } = useSocket();
 
 const drawer = ref(false);
-const APPS_URL = import.meta.env.VITE_APPS_URL;
+const APPS_URL = runtimeEnv.VITE_APPS_URL;
 
 const nav = computed(() => [
   {
@@ -68,7 +69,7 @@ const nav = computed(() => [
 ]);
 
 onMounted(() => {
-  connect(import.meta.env.VITE_WHEREABOUTS_API_URL);
+  connect(runtimeEnv.VITE_WHEREABOUTS_API_URL);
 });
 
 // Authenticate socket whenever a session becomes available
