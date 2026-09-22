@@ -19,14 +19,14 @@ import { onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { GroupPicker } from "@moreillon/group-manager-vue-picker";
 import { useAuth } from "@jtekt/vuetify-auth";
+import runtimeEnv from "@/runtimeEnv";
 
 const router = useRouter();
 const route = useRoute();
 const { session } = useAuth();
 
-const GROUP_MANAGER_API_URL = import.meta.env.VITE_GROUP_MANAGER_API_URL;
-const EMPLOYEE_MANAGER_FRONT_URL = import.meta.env
-  .VITE_EMPLOYEE_MANAGER_FRONT_URL;
+const GROUP_MANAGER_API_URL = runtimeEnv.VITE_GROUP_MANAGER_API_URL;
+const EMPLOYEE_MANAGER_FRONT_URL = runtimeEnv.VITE_EMPLOYEE_MANAGER_FRONT_URL;
 
 interface Group {
   _id: string;

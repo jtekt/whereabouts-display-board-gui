@@ -32,6 +32,7 @@
 <script setup lang="ts">
 import { reactive, onMounted } from "vue";
 import axios from "axios";
+import runtimeEnv from "@/runtimeEnv";
 
 interface Service {
   name: string;
@@ -43,26 +44,26 @@ const services = reactive<Service[]>([
   {
     name: "Whereabouts GUI",
     url: window.location.origin,
-    version: import.meta.env.VITE_APP_VERSION,
+    version: runtimeEnv.VITE_APP_VERSION,
   },
   {
     name: "Whereabouts API",
-    url: import.meta.env.VITE_WHEREABOUTS_API_URL,
+    url: runtimeEnv.VITE_WHEREABOUTS_API_URL,
     version: null,
   },
   {
     name: "Group manager API",
-    url: import.meta.env.VITE_GROUP_MANAGER_API_URL,
+    url: runtimeEnv.VITE_GROUP_MANAGER_API_URL,
     version: null,
   },
   {
     name: "Login URL",
-    url: import.meta.env.VITE_LOGIN_URL,
+    url: runtimeEnv.VITE_LOGIN_URL,
     version: "N/A",
   },
   {
     name: "Identification URL",
-    url: import.meta.env.VITE_AUTH_IDENTIFICATION_URL,
+    url: runtimeEnv.VITE_AUTH_IDENTIFICATION_URL,
     version: "N/A",
   },
 ]);
