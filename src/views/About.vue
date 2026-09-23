@@ -1,104 +1,46 @@
 <template>
-  <v-card max-width="60rem" class="mx-auto">
-    <v-card-title>行先掲示板</v-card-title>
-
+  <v-card
+    prepend-icon="mdi-information"
+    :title="t('App title')"
+    :subtitle="version"
+  >
     <v-card-text>
-      <p>A web-based display board to show the whereabouts of team members.</p>
-      <p>
-        Developed and maintained by
-        <a href="https://maximemoreillon.com">Maxime MOREILLON</a>
-      </p>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Version</th>
-            <th>URL</th>
-          </tr>
-        </thead>
+      <div class="text-subtitle-2 mb-2">{{ t("Environment variables") }}</div>
+      <v-table density="compact">
         <tbody>
-          <tr v-for="(service, index) in services" :key="`service_${index}`">
-            <td>{{ service.name }}</td>
-            <td>{{ service.version }}</td>
-            <td>{{ service.url || "Undefined" }}</td>
+          <tr v-for="envVar in envVars" :key="envVar.key">
+            <td>{{ envVar.key }}</td>
+            <td>{{ envVar.value }}</td>
           </tr>
         </tbody>
-      </table>
+      </v-table>
     </v-card-text>
   </v-card>
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted } from "vue";
-import axios from "axios";
+import { useI18n } from "vue-i18n";
 import runtimeEnv from "@/runtimeEnv";
 
-interface Service {
-  name: string;
-  url: string | undefined;
-  version: string | null;
-}
+const { t } = useI18n();
 
-const services = reactive<Service[]>([
-  {
-    name: "Whereabouts GUI",
-    url: window.location.origin,
-    version: runtimeEnv.VITE_APP_VERSION,
-  },
-  {
-    name: "Whereabouts API",
-    url: runtimeEnv.VITE_WHEREABOUTS_API_URL,
-    version: null,
-  },
-  {
-    name: "Group manager API",
-    url: runtimeEnv.VITE_GROUP_MANAGER_API_URL,
-    version: null,
-  },
-  {
-    name: "Login URL",
-    url: runtimeEnv.VITE_LOGIN_URL,
-    version: "N/A",
-  },
-  {
-    name: "Identification URL",
-    url: runtimeEnv.VITE_AUTH_IDENTIFICATION_URL,
-    version: "N/A",
-  },
-]);
+const {
+  VITE_WHEREABOUTS_API_URL,
+  VITE_GROUP_MANAGER_API_URL,
+  VITE_LOGIN_URL,
+  VITE_AUTH_IDENTIFICATION_URL,
+  VITE_OIDC_AUTHORITY,
+  VITE_OIDC_CLIENT_ID,
+} = runtimeEnv;
 
-async function getServicesVersion() {
-  for (const service of services) {
-    if (service.version) continue;
-    service.version = "Connecting...";
-    try {
-      const { data } = await axios.get(service.url!);
-      service.version = data.version ?? "Unknown";
-    } catch {
-      service.version = "Unable to connect";
-    }
-  }
-}
+const version = import.meta.env.VITE_APP_VERSION || "dev";
 
-onMounted(() => {
-  getServicesVersion();
-});
+const envVars = [
+  { key: "VITE_WHEREABOUTS_API_URL", value: VITE_WHEREABOUTS_API_URL },
+  { key: "VITE_GROUP_MANAGER_API_URL", value: VITE_GROUP_MANAGER_API_URL },
+  { key: "VITE_LOGIN_URL", value: VITE_LOGIN_URL },
+  { key: "VITE_AUTH_IDENTIFICATION_URL", value: VITE_AUTH_IDENTIFICATION_URL },
+  { key: "VITE_OIDC_AUTHORITY", value: VITE_OIDC_AUTHORITY },
+  { key: "VITE_OIDC_CLIENT_ID", value: VITE_OIDC_CLIENT_ID },
+];
 </script>
-
-<style scoped>
-table {
-  width: 100%;
-  margin-inline: auto;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-tr:not(:last-child) {
-  border-bottom: 1px solid #dddddd;
-}
-
-td {
-  padding: 0.25em 2em;
-}
-</style>

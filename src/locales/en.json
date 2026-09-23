@@ -2,5 +2,7 @@
   "message": "hello i18n !!",
   "Groups": "Groups",
   "About": "About",
-  "Client configuration": "Client configuration"
+  "Client configuration": "Client configuration",
+  "App title": "Whereabouts",
+  "Environment variables": "Environment variables"
 }
