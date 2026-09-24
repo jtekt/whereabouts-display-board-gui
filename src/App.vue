@@ -10,6 +10,7 @@
         <ThemeToggler />
 
         <v-btn v-if="APPS_URL" :href="APPS_URL" icon="mdi-apps" />
+        <v-btn v-if="HELP_URL" :href="HELP_URL" icon="mdi-help" />
         <v-btn v-if="session" icon="mdi-logout" @click="logout" />
       </template>
     </v-app-bar>
@@ -54,6 +55,7 @@ const { authenticate, connect } = useSocket();
 
 const drawer = ref(false);
 const APPS_URL = runtimeEnv.VITE_APPS_URL;
+const HELP_URL = runtimeEnv.VITE_HELP_URL;
 
 const nav = computed(() => [
   {

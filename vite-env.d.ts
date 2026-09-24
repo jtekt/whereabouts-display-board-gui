@@ -7,6 +7,7 @@ interface Window {
 interface ImportMetaEnv {
   readonly VITE_APP_VERSION: string
   readonly VITE_APPS_URL: string
+  readonly VITE_HELP_URL?: string
   readonly VITE_WHEREABOUTS_API_URL: string
   readonly VITE_GROUP_MANAGER_API_URL: string
   readonly VITE_AUTH_IDENTIFICATION_URL: string
