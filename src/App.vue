@@ -7,7 +7,7 @@
       <v-app-bar-title> 行先掲示板 </v-app-bar-title>
       <template #append>
         <LocaleSelector />
-        <ThemeToggler />
+        <ThemeToggle />
 
         <v-btn v-if="APPS_URL" :href="APPS_URL" icon="mdi-apps" />
         <v-btn v-if="HELP_URL" :href="HELP_URL" icon="mdi-help" />
@@ -44,7 +44,7 @@ import { useI18n } from "vue-i18n";
 import { useAuth } from "@jtekt/vuetify-auth";
 import { useSocket } from "@/composables/useSocket";
 import LocaleSelector from "@/components/LocaleSelector.vue";
-import ThemeToggler from "@/components/ThemeToggler.vue";
+import ThemeToggle from "@/components/ThemeToggle.vue";
 import { useAxiosAuth } from "@/composables/useAxiosAuth";
 import runtimeEnv from "@/runtimeEnv";
 
