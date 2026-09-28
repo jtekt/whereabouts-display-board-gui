@@ -30,7 +30,7 @@ export function useAxiosAuth() {
     async (error) => {
       const status = error.response?.status;
 
-      if (status === 401 || status === 403) {
+      if (status === 401) {
         delete axios.defaults.headers.common["Authorization"];
 
         await logout?.();
