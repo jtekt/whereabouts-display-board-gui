@@ -11,16 +11,40 @@ axios.defaults.baseURL = runtimeEnv.VITE_WHEREABOUTS_API_URL;
 
 const auth = createAuthPlugin(
   {
-    oidc: {
-      clientId: runtimeEnv.VITE_OIDC_CLIENT_ID,
-      authority: runtimeEnv.VITE_OIDC_AUTHORITY,
-      enrichmentEndpoint: runtimeEnv.VITE_AUTH_IDENTIFICATION_URL,
-      identifierLookupField: runtimeEnv.VITE_AUTH_ENRICMENT_ID_FIELD,
+    strategies: {
+      oidc: {
+        clientId: runtimeEnv.VITE_OIDC_CLIENT_ID,
+        authority: runtimeEnv.VITE_OIDC_AUTHORITY,
+        enrichment: {
+          endpoint: runtimeEnv.VITE_AUTH_IDENTIFICATION_URL,
+        },
+        identity: {
+          source: "enrichment",
+          identifierLookupField: runtimeEnv.VITE_AUTH_ENRICMENT_ID_FIELD || "_id",
+        },
+      },
+      credentials: {
+        loginEndpoint: runtimeEnv.VITE_LOGIN_URL,
+        identity: {
+          identifierLookupField: runtimeEnv.VITE_AUTH_ENRICMENT_ID_FIELD || "_id",
+        },
+      },
     },
-    credentials: {
-      loginEndpoint: runtimeEnv.VITE_LOGIN_URL,
-      resetPasswordEndpoint: runtimeEnv.VITE_PASSWORD_RESET_URL,
-      identifierLookupField: runtimeEnv.VITE_AUTH_ENRICMENT_ID_FIELD,
+    onAuthError: (error) => console.error("[Auth]", error),
+    onSessionChange(session) {
+      if (!session) {
+        console.log("[SESSION] no session");
+        delete axios.defaults.headers.common["Authorization"];
+        return;
+      }
+
+      const token = session.accessToken;
+
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      } else {
+        delete axios.defaults.headers.common["Authorization"];
+      }
     },
   },
   router,
