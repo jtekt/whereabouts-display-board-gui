@@ -45,10 +45,8 @@ import { useAuth } from "@jtekt/vuetify-auth";
 import { useSocket } from "@/composables/useSocket";
 import LocaleSelector from "@/components/LocaleSelector.vue";
 import ThemeToggle from "@/components/ThemeToggle.vue";
-import { useAxiosAuth } from "@/composables/useAxiosAuth";
 import runtimeEnv from "@/runtimeEnv";
 
-useAxiosAuth();
 const { t } = useI18n();
 const { session, logout } = useAuth();
 const { authenticate, connect } = useSocket();
