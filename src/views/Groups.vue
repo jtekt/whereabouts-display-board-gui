@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { GroupPicker } from "@moreillon/group-manager-vue-picker";
+import { GroupPicker } from "@jtekt/group-manager-vue-picker";
 import { useAuth } from "@jtekt/vuetify-auth";
 import runtimeEnv from "@/runtimeEnv";
 
